@@ -2,7 +2,7 @@
 import { useQuery } from "@tanstack/react-query"
 import BlockRenderer from "../../components/blockrenderer/BlockRenderer"
 import { Link, useParams } from "react-router-dom"
-import { useEffectiveWorkspaceId } from "../../hooks/useEffectiveWorkspaceId"
+import { useCurrentWorkspaceId } from "../../hooks/useCurrentWorkspace"
 import { useEffect, useState } from "react"
 import { getNote, NoteData } from "../../api/note"
 import TransitionWrapper from "../../components/transitionwrapper/TransitionWrapper"
@@ -12,7 +12,7 @@ import NoteDetailMenu from "../../components/notedetailmenu/NoteDetailMenu"
 const NoteDetailPage = () => {
     const [_, setIsLoading] = useState<boolean>(true)
     const [note, setNote] = useState<NoteData>({ blocks: [], tags: [], visibility: "private" })
-    const currentWorkspaceId = useEffectiveWorkspaceId()
+    const currentWorkspaceId = useCurrentWorkspaceId()
     const { noteId } = useParams()
 
     const { data: fetchedNote } = useQuery({

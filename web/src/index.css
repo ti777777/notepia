@@ -122,3 +122,12 @@ code.cdx-code__line { @apply font-mono text-sm; }
 ::-webkit-scrollbar-track {
   @apply bg-neutral-100 dark:bg-neutral-800 ;
 }
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE, Edge */
+  scrollbar-width: none;     /* Firefox */
+}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { useEffectiveWorkspaceId } from "../../hooks/useEffectiveWorkspaceId"
+import { useCurrentWorkspaceId } from "../../hooks/useCurrentWorkspace"
 import { useParams, useNavigate, Link } from "react-router-dom"
 import { createNote, getNote, NoteData, updateNote } from "../../api/note"
 import { ChevronLeft } from "lucide-react"
@@ -11,7 +11,7 @@ import TransitionWrapper from "../../components/transitionwrapper/TransitionWrap
 const NoteEdit = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true)
     const [note, setNote] = useState<NoteData>({ blocks: [], visibility: "private" })
-    const currentWorkspaceId = useEffectiveWorkspaceId()
+    const currentWorkspaceId = useCurrentWorkspaceId()
     const { noteId } = useParams()
     const { t } = useTranslation()
     const queryClient = useQueryClient()
@@ -81,7 +81,7 @@ const NoteEdit = () => {
     return <TransitionWrapper
         className="px-0 xl:px-6 bg-white dark:bg-neutral-900"
     >
-        <div className="flex flex-col min-h-dvh ">
+        <div className="flex flex-col min-h-screen">
             <div className="py-2 px-4 sm:px-0  flex items-center justify-between border-b xl:border-b-0">
                 <div className="">
                     <Link to={`/workspaces/${currentWorkspaceId}/`} className="inline-flex p-3 rounded-full ">

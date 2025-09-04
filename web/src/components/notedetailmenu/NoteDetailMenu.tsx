@@ -3,7 +3,7 @@ import { Ellipsis, Pencil, Trash2 } from "lucide-react"
 import { DropdownMenu } from "radix-ui"
 import { Link, useNavigate } from "react-router-dom"
 import { deleteNote } from "../../api/note"
-import { useEffectiveWorkspaceId } from "../../hooks/useEffectiveWorkspaceId"
+import { useCurrentWorkspaceId } from "../../hooks/useCurrentWorkspace"
 import { useTranslation } from "react-i18next"
 
 interface Props {
@@ -12,7 +12,7 @@ interface Props {
 
 const NoteDetailMenu:React.FC<Props> = ({noteId}) => {
     const {t} = useTranslation()
-    const currentWorkspaceId = useEffectiveWorkspaceId()
+    const currentWorkspaceId = useCurrentWorkspaceId()
     const queryClient = useQueryClient()
     const navigate = useNavigate()
     const deleteNoteMutation = useMutation({

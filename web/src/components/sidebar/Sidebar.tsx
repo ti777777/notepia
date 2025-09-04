@@ -7,11 +7,11 @@ import { useTranslation } from 'react-i18next';
 import ThemeButton from "../themebutton/ThemeButton"
 import { Tooltip } from "radix-ui"
 import UserMenu from "../usermenu/UserMenu"
-import { useEffectiveWorkspaceId } from "../../hooks/useEffectiveWorkspaceId"
+import { useCurrentWorkspaceId } from "../../hooks/useCurrentWorkspace"
 
 const Sidebar = function () {
     const { t } = useTranslation();
-    const currentWorkspaceId = useEffectiveWorkspaceId()
+    const currentWorkspaceId = useCurrentWorkspaceId()
     const { isOpen, isCollapse, isOver1280, expandSidebar, collapseSidebar } = useSidebar()
 
     return <>

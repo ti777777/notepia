@@ -1,9 +1,9 @@
 import Masonry from "../../components/masonry/Masonry"
-import { Loader2Icon, MoveDiagonal, PlusCircle } from "lucide-react"
+import { MoveDiagonal, PlusCircle } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import SidebarButton from "../../components/sidebar/SidebarButton"
 import { getNotes, NoteData } from "../../api/note"
-import { useEffectiveWorkspaceId } from "../../hooks/useEffectiveWorkspaceId"
+import { useCurrentWorkspaceId, useCurrentWorkspaceName } from "../../hooks/useCurrentWorkspace"
 import { Link } from "react-router-dom"
 import { useInfiniteQuery } from "@tanstack/react-query"
 import { useRef, useCallback } from "react"
@@ -15,7 +15,8 @@ import Loader from "../../components/loader/Loader"
 const PAGE_SIZE = 20;
 
 const Notes = () => {
-    const currentWorkspaceId = useEffectiveWorkspaceId()
+    const workspaceName = useCurrentWorkspaceName()
+    const currentWorkspaceId = useCurrentWorkspaceId();
     const { t } = useTranslation()
 
     const observerRef = useRef<IntersectionObserver | null>(null);
@@ -85,9 +86,11 @@ const Notes = () => {
         <TransitionWrapper className="w-full">
             <div className=" py-2 ">
                 <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-3 sm:text-lg h-10">
+                    <div className="flex items-center gap-3 h-10">
                         <SidebarButton />
-                        {t("pages.notes.title")}
+                        <div className=" max-w-[calc(100vw-100px)] overflow-x-auto sm:text-xl font-semibold hide-scrollbar">
+                            {workspaceName}
+                        </div>
                     </div>
                     <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                         <Tooltip.Root>

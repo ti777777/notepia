@@ -8,7 +8,7 @@ import ImageTool from '@editorjs/image';
 import AttachesTool from '@editorjs/attaches';
 import Table from '@editorjs/table'
 import Embed from '@editorjs/embed';
-import { useEffectiveWorkspaceId } from "../../hooks/useEffectiveWorkspaceId";
+import { useCurrentWorkspaceId } from "../../hooks/useCurrentWorkspace";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
 
@@ -20,7 +20,7 @@ interface Props {
 const Editor: React.FC<Props> = ({ value, onChange }) => {
   const ejInstance = useRef<EditorJS | null>(null);
   const holder = useRef<HTMLDivElement>(null);
-  const currentWorkspaceId = useEffectiveWorkspaceId()
+  const currentWorkspaceId = useCurrentWorkspaceId()
   const { t } = useTranslation()
 
   useEffect(() => {
