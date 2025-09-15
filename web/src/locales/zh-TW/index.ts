@@ -8,8 +8,10 @@ export default {
     notes: "筆記",
     createWithName: "新增工作區：{{name}}",
     workspaceSettings: "工作區設定",
+    workspace: "工作區",
     user: "使用者",
     preferences: "偏好設定",
+    explore: "探索",
   },
   form: {
     email: "Email",
@@ -58,6 +60,7 @@ export default {
     newNote: "新增筆記",
     rename: "重新命名",
     filter: "篩選",
+    toggleTheme: "切換主題",
     selectFileToUpload: "選擇檔案",
     makePublic: "設為公開",
     makeWorkspace: "設為工作區可見",

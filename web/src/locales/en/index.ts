@@ -8,8 +8,10 @@ export default {
     notes: "Notes",
     createWithName: "Create workspace：{{name}}",
     workspaceSettings: "Workspace Settings",
+    workspace: "Workspace",
     user: "User",
     preferences: "Preferences",
+    explore: "Explore",
   },
   form: {
     email: "Email",
@@ -58,6 +60,7 @@ export default {
     newNote: "New Note",
     rename: "Rename",
     filter: "Filter",
+    toggleTheme: "Toggle theme",
     selectFileToUpload: "Select file to upload",
     makePublic: "Make Public",
     makeWorkspace: "Make Workspace",

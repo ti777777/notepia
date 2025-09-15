@@ -4,25 +4,16 @@ import { useSidebar } from "../sidebar/SidebarProvider"
 import { Link, Outlet } from "react-router-dom"
 import { useEffect } from "react"
 import Main from "../main/Main"
-import { useWorkspaceStore } from "../../stores/workspace"
-import WorkspaceMenu from "../workspacemenu/WorkspaceMenu"
-import useCurrentWorkspaceId from "../../hooks/useCurrentworkspaceId"
-import { Text } from 'lucide-react'
+import { Laptop2, LogIn } from 'lucide-react'
 import { useTranslation } from "react-i18next"
-import Tooltip from "../tooltip/Tooltip"
+import logo from '../../assets/app.png'
+import logotext from '../../assets/applogo_text.png'
+import { useCurrentUserStore } from "../../stores/current-user"
 
-const WorkspaceLayout = () => {
-    const { t } = useTranslation();
+const PublicLayout = () => {
+    const { t } = useTranslation()
     const { isOpen, isCollapse, closeSidebar, isOver1280 } = useSidebar()
-    const { isFetched, fetchWorkspaces } = useWorkspaceStore()
-    const currentWorkspaceId = useCurrentWorkspaceId()
-
-    useEffect(() => {
-        (async () => {
-            if (isFetched) return;
-            await fetchWorkspaces();
-        })()
-    }, [])
+    const { user } = useCurrentUserStore()
 
     useEffect(() => {
         closeSidebar()
@@ -31,24 +22,27 @@ const WorkspaceLayout = () => {
     return <>
         <div className='flex justify-center relative'>
             <div className={twMerge("flex", isOver1280 ? isCollapse ? "w-[72px]" : "w-[260px]" : isOpen ? "w-full absolute top-0 z-30" : "")}>
-                <Sidebar >
+                <Sidebar
+                >
                     <div className="flex flex-col gap-3">
                         <div className="pt-4">
-                            <WorkspaceMenu />
+                            <div className={twMerge("flex gap-5 items-center ", isCollapse ? "justify-center": "justify-start px-4")}>
+                                <img src={logo} className="w-8 h-8" aria-label="logo" />
+                                {!isCollapse && <img src={logotext} className='w-28' alt="logo" />}
+                            </div>
                         </div>
                         <div className=" flex flex-col gap-1 overflow-y-auto">
-                            <div className="">
-                                <Tooltip
-                                    text={t("menu.notes")}
-                                    side="right"
-                                    enabled={isCollapse}
-                                    >
-                                    <Link to={`/workspaces/${currentWorkspaceId}`} className="flex items-center gap-3 w-full p-2.5 rounded-md hover:bg-neutral-300 dark:hover:bg-neutral-700">
-                                        <Text size={20} />
-                                        {!isCollapse && t("menu.notes")}
+                            {
+                                user ? <Link to="/" className="p-2 flex items-center gap-2">
+                                    <Laptop2 size={20} />
+                                    {!isCollapse && <>{t("menu.workspace")}</>}
+                                </Link>
+                                    : <Link to="/signin" className="p-2 flex items-center gap-2">
+                                        <LogIn size={20} />
+                                        {!isCollapse && <>{t("actions.signin")}</>}
                                     </Link>
-                                </Tooltip>
-                            </div>
+                            }
+
                         </div>
                     </div>
                 </Sidebar>
@@ -70,4 +64,4 @@ const WorkspaceLayout = () => {
     </>
 }
 
-export default WorkspaceLayout
+export default PublicLayout
