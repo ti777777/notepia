@@ -9,6 +9,7 @@ import (
 type DB interface {
 	Uow
 	UserRepository
+	UserSettingsRepository
 	NoteRepository
 	FileRepository
 	WorkspaceRepository
@@ -19,13 +20,16 @@ type Uow interface {
 	Commit() error
 	Rollback() error
 }
-
 type UserRepository interface {
 	CreateUser(u model.User) error
 	FindUsers(f model.UserFilter) ([]model.User, error)
 	FindUserByID(id string) (model.User, error)
 	UpdateUser(u model.User) error
 	DeleteUser(id string) error
+}
+type UserSettingsRepository interface {
+	SaveUserSettings(u model.UserSettings) error
+	FindUserSettingsByID(id string) (model.UserSettings, error)
 }
 type NoteRepository interface {
 	CreateNote(n model.Note) error

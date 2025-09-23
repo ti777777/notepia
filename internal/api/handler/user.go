@@ -7,6 +7,8 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/pinbook/pinbook/internal/api/auth"
+	"github.com/pinbook/pinbook/internal/config"
+	"github.com/pinbook/pinbook/internal/util"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -16,6 +18,14 @@ type ChangePasswordRequest struct {
 
 type UpdatePreferencesRequest struct {
 	Preferences json.RawMessage `json:"preferences" validate:"required"`
+}
+
+type SaveOpenaiKeyRequest struct {
+	OpenAIKey *string `json:"openai_api_key"`
+}
+
+type SaveGeminiKeyRequest struct {
+	GeminiKey *string `json:"gemini_api_key"`
 }
 
 func (h Handler) UpdatePreferences(c echo.Context) error {
@@ -69,7 +79,21 @@ func (h Handler) ChangePassword(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, "password is required")
 	}
 
-	user, err := h.db.FindUserByID(id)
+	cookie, err := c.Cookie("token")
+	if err != nil || cookie.Value == "" {
+		return echo.NewHTTPError(http.StatusUnauthorized, "missing or invalid token")
+	}
+
+	user, err := auth.GetUserFromCookie(cookie)
+	if err != nil || user == nil {
+		return echo.NewHTTPError(http.StatusUnauthorized, "invalid token")
+	}
+
+	if user.ID != id {
+		return echo.NewHTTPError(http.StatusForbidden, "You do not have permission to update the preferences.")
+	}
+
+	u, err := h.db.FindUserByID(id)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, "failed to get user by id")
 	}
@@ -80,15 +104,176 @@ func (h Handler) ChangePassword(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, "failed to hash password")
 	}
 
-	user.PasswordHash = string(hashedPassword)
-	user.UpdatedAt = time.Now().UTC().String()
-	user.UpdatedBy = user.ID
+	u.PasswordHash = string(hashedPassword)
+	u.UpdatedAt = time.Now().UTC().String()
+	u.UpdatedBy = user.ID
 
-	err = h.db.UpdateUser(user)
+	err = h.db.UpdateUser(u)
 
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, "failed to update user")
 	}
 
 	return c.JSON(http.StatusOK, "Successfully changed password.")
+}
+
+func (h Handler) GetUserSettings(c echo.Context) error {
+	id := c.Param("id")
+
+	cookie, err := c.Cookie("token")
+	if err != nil || cookie.Value == "" {
+		return echo.NewHTTPError(http.StatusUnauthorized, "missing or invalid token")
+	}
+
+	user, err := auth.GetUserFromCookie(cookie)
+	if err != nil || user == nil {
+		return echo.NewHTTPError(http.StatusUnauthorized, "invalid token")
+	}
+
+	if user.ID != id {
+		return echo.NewHTTPError(http.StatusForbidden, "You do not have permission to get user settings")
+	}
+
+	us, err := h.db.FindUserSettingsByID(id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, "failed to get user settings by id")
+	}
+
+	secret := config.C.GetString(config.APP_SECRET)
+
+	if us.OpenAIKey != nil {
+		decrypted, err := util.Decrypt(*us.OpenAIKey, secret)
+
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, "failed to decrypt key")
+		}
+
+		us.OpenAIKey = maskAPIKey(&decrypted)
+	}
+
+	if us.GeminiKey != nil {
+		decrypted, err := util.Decrypt(*us.GeminiKey, secret)
+
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, "failed to decrypt key")
+		}
+
+		us.GeminiKey = maskAPIKey(&decrypted)
+	}
+
+	return c.JSON(http.StatusOK, us)
+}
+
+func (h Handler) UpdateOpenAIKey(c echo.Context) error {
+	id := c.Param("id")
+
+	cookie, err := c.Cookie("token")
+	if err != nil || cookie.Value == "" {
+		return echo.NewHTTPError(http.StatusUnauthorized, "missing or invalid token")
+	}
+
+	var req SaveOpenaiKeyRequest
+	if err := c.Bind(&req); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	user, err := auth.GetUserFromCookie(cookie)
+	if err != nil || user == nil {
+		return echo.NewHTTPError(http.StatusUnauthorized, "invalid token")
+	}
+
+	if user.ID != id {
+		return echo.NewHTTPError(http.StatusForbidden, "You do not have permission to update user settings")
+	}
+
+	us, err := h.db.FindUserSettingsByID(id)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, "failed to get user settings by id")
+	}
+
+	secret := config.C.GetString(config.APP_SECRET)
+
+	if req.OpenAIKey != nil {
+		encrypted, err := util.Encrypt(*req.OpenAIKey, secret)
+
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, "failed to encrypt api key")
+		}
+
+		us.OpenAIKey = &encrypted
+	}
+	err = h.db.SaveUserSettings(us)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, "failed to update settings")
+	}
+
+	us.OpenAIKey = maskAPIKey(req.OpenAIKey)
+
+	return c.JSON(http.StatusOK, us)
+}
+
+func (h Handler) UpdateGeminiKey(c echo.Context) error {
+	id := c.Param("id")
+
+	cookie, err := c.Cookie("token")
+	if err != nil || cookie.Value == "" {
+		return echo.NewHTTPError(http.StatusUnauthorized, "missing or invalid token")
+	}
+
+	var req SaveGeminiKeyRequest
+	if err := c.Bind(&req); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	user, err := auth.GetUserFromCookie(cookie)
+	if err != nil || user == nil {
+		return echo.NewHTTPError(http.StatusUnauthorized, "invalid token")
+	}
+
+	if user.ID != id {
+		return echo.NewHTTPError(http.StatusForbidden, "You do not have permission to update user settings")
+	}
+
+	us, err := h.db.FindUserSettingsByID(id)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, "failed to get user settings by id")
+	}
+
+	secret := config.C.GetString(config.APP_SECRET)
+
+	if req.GeminiKey != nil {
+		encrypted, err := util.Encrypt(*req.GeminiKey, secret)
+
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, "failed to encrypt api key")
+		}
+
+		us.GeminiKey = &encrypted
+	}
+	err = h.db.SaveUserSettings(us)
+
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, "failed to update settings")
+	}
+
+	us.GeminiKey = maskAPIKey(req.GeminiKey)
+
+	return c.JSON(http.StatusOK, us)
+}
+
+func maskAPIKey(key *string) *string {
+	if key == nil {
+		return nil
+	}
+
+	k := *key
+	if len(k) <= 3 {
+		return &k
+	}
+
+	masked := k[:3] + "******************************************"
+	return &masked
 }
