@@ -1,6 +1,5 @@
 export default {
   placeholder: {
-    note: "輸入你的筆記 ...",
     search: "搜尋",
     searchWorkspace: "搜尋 / 新增工作區"
   },
@@ -42,6 +41,9 @@ export default {
     noteEdit: {
       newNote: "新增筆記",
       editNote: "編輯筆記",
+    },
+    noteDetail: {
+      note: "筆記",
     },
     preferences: {
       language: "語言"
