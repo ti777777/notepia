@@ -35,4 +35,16 @@ func RegisterWorkspace(api *echo.Group, h handler.Handler, authMiddleware middle
 	g.GET("/:workspaceId/files", h.List)
 	g.POST("/:workspaceId/files", h.Upload)
 	g.DELETE("/:workspaceId/files/:id", h.Delete)
+
+	g.GET("/:workspaceId/gen-templates", h.GetGenTemplates)
+	g.POST("/:workspaceId/gen-templates", h.CreateGenTemplate)
+	g.GET("/:workspaceId/gen-templates/:id", h.GetGenTemplate)
+	g.PUT("/:workspaceId/gen-templates/:id", h.UpdateGenTemplate)
+	g.DELETE("/:workspaceId/gen-templates/:id", h.DeleteGenTemplate)
+	g.GET("/:workspaceId/gen-models", h.ListGenModels)
+
+	g.POST("/:workspaceId/gen-templates/generate", h.GenerateFromTemplate)
+	g.GET("/:workspaceId/gen-history", h.GetGenHistories)
+	g.GET("/:workspaceId/gen-history/:id", h.GetGenHistory)
+	g.DELETE("/:workspaceId/gen-history/:id", h.DeleteGenHistory)
 }
