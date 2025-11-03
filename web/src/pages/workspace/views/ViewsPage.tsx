@@ -6,7 +6,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useTranslation } from "react-i18next"
-import TransitionWrapper from "@/components/transitionwrapper/TransitionWrapper"
 import OneColumn from "@/components/onecolumn/OneColumn"
 import { ViewType } from "@/types/view"
 import { useToastStore } from "@/stores/toast"
@@ -119,7 +118,7 @@ const ViewsPage = () => {
 
     return (
         <OneColumn>
-            <TransitionWrapper className="w-full">
+            <div className="w-full">
                 <div className="py-2">
                     <div className="flex justify-between items-center">
                         <div className="flex items-center gap-3 h-10">
@@ -130,6 +129,7 @@ const ViewsPage = () => {
                         </div>
                         <div className="flex items-center text-gray-600 dark:text-gray-400">
                             <button
+                                aria-label="create new"
                                 onClick={() => setIsCreating(!isCreating)}
                                 className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-neutral-200 dark:hover:bg-neutral-800 transition-colors"
                             >
@@ -277,10 +277,11 @@ const ViewsPage = () => {
                                                                 }
                                                             }}
                                                             className="w-full px-2 py-1 rounded border dark:border-neutral-600 bg-white dark:bg-neutral-800 font-semibold"
+                                                            aria-label="new view name"
                                                             autoFocus
                                                         />
                                                     ) : (
-                                                        <h3 className="font-semibold truncate">{view.name}</h3>
+                                                        <div className="font-semibold truncate">{view.name}</div>
                                                     )}
                                                     <p className="text-sm text-gray-500 capitalize">
                                                         {view.type === 'map' ? t('views.map') : t('views.calendar')}
@@ -335,7 +336,7 @@ const ViewsPage = () => {
                         )}
                     </div>
                 </div>
-            </TransitionWrapper>
+            </div>
         </OneColumn>
     )
 }

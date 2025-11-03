@@ -2,12 +2,11 @@ import { useState, useEffect, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { useNavigate, useParams } from "react-router-dom"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { ArrowLeft, Save, Upload, X } from "lucide-react"
+import { ArrowLeft, Save } from "lucide-react"
 import useCurrentWorkspaceId from "@/hooks/use-currentworkspace-id"
 import { createGenTemplate, updateGenTemplate, getGenTemplate, listGenModels } from "@/api/gen-template"
 import { uploadFile } from "@/api/file"
-import { Modality, GenModel } from "@/types/gen-template"
-import TransitionWrapper from "@/components/transitionwrapper/TransitionWrapper"
+import { Modality } from "@/types/gen-template"
 import { useToastStore } from "@/stores/toast"
 
 const GenTemplateFormPage = () => {
@@ -25,7 +24,7 @@ const GenTemplateFormPage = () => {
     const [model, setModel] = useState("")
     const [modality, setModality] = useState<Modality>("text2text")
     const [imageUrls, setImageUrls] = useState<string[]>([])
-    const [uploadingIndex, setUploadingIndex] = useState<number | null>(null)
+    const [_, setUploadingIndex] = useState<number | null>(null)
 
     // Fetch all available models
     const { data: allModels = [] } = useQuery({
@@ -201,10 +200,11 @@ const GenTemplateFormPage = () => {
     }
 
     return (
-        <TransitionWrapper className="w-full max-w-4xl">
-            <div className="py-4">
+        <div className="p-4 xl:px-0 xl:pr-4 w-full">
+            <div className="w-full max-w-3xl">
                 <div className="flex items-center gap-3">
                     <button
+                        aria-label="back"
                         onClick={() => navigate(-1)}
                         className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
                     >
@@ -224,6 +224,7 @@ const GenTemplateFormPage = () => {
                             type="text"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
+                            aria-label="template name"
                             className="w-full px-4 py-2 rounded-lg border dark:border-neutral-700 bg-white dark:bg-neutral-800"
                             required
                         />
@@ -261,6 +262,7 @@ const GenTemplateFormPage = () => {
                         <select
                             value={modality}
                             onChange={(e) => setModality(e.target.value as Modality)}
+                            aria-label="modality"
                             className="w-full px-4 py-2 rounded-lg border dark:border-neutral-700 bg-white dark:bg-neutral-800"
                             required
                         >
@@ -275,6 +277,7 @@ const GenTemplateFormPage = () => {
                         <select
                             value={provider}
                             onChange={(e) => setProvider(e.target.value)}
+                            aria-label="provider"
                             className="w-full px-4 py-2 rounded-lg border dark:border-neutral-700 bg-white dark:bg-neutral-800"
                             required
                             disabled={availableProviders.length === 0}
@@ -300,6 +303,7 @@ const GenTemplateFormPage = () => {
                         <select
                             value={model}
                             onChange={(e) => setModel(e.target.value)}
+                            aria-label="model"
                             className="w-full px-4 py-2 rounded-lg border dark:border-neutral-700 bg-white dark:bg-neutral-800"
                             required
                             disabled={!provider || availableModels.length === 0}
@@ -338,7 +342,7 @@ const GenTemplateFormPage = () => {
                     </div>
                 </form>
             </div>
-        </TransitionWrapper>
+        </div>
     )
 }
 

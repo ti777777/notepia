@@ -1,11 +1,9 @@
-import { Calendar, LayoutGrid, LayoutList, MapPin, Search, X } from "lucide-react"
+import { Calendar, MapPin } from "lucide-react"
 import { useTranslation } from "react-i18next"
 import SidebarButton from "@/components/sidebar/SidebarButton"
 import { getPublicViews } from "@/api/view"
 import { useInfiniteQuery } from "@tanstack/react-query"
-import { useRef, useCallback, useState, useEffect } from "react"
-import TransitionWrapper from "@/components/transitionwrapper/TransitionWrapper"
-import { Tooltip } from "radix-ui"
+import { useRef, useCallback, useState } from "react"
 import Loader from "@/components/loader/Loader"
 import OneColumn from "@/components/onecolumn/OneColumn"
 import { Link } from "react-router-dom"
@@ -55,7 +53,7 @@ const ExploreViewsPage = () => {
 
     return <>
         <OneColumn>
-            <TransitionWrapper className="w-full">
+            <div className="w-full">
                 <div className="py-2">
                     <div className="flex justify-between items-center">
                         <div className="flex items-center gap-3 h-10">
@@ -102,7 +100,7 @@ const ExploreViewsPage = () => {
                                             ) : (
                                                 <MapPin size={18} className="text-orange-500" />
                                             )}
-                                            <h3 className="font-semibold text-lg truncate">{view.name}</h3>
+                                            <div className="font-semibold text-lg truncate">{view.name}</div>
                                         </div>
                                         <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                                             <span>{t(`views.${view.type}`)}</span>
@@ -119,7 +117,7 @@ const ExploreViewsPage = () => {
                         {!isLoading && !hasNextPage && <div className="text-center py-4 text-gray-400">{t("messages.noMoreViews")}</div>}
                     </div>
                 </div>
-            </TransitionWrapper >
+            </div >
         </OneColumn>
     </>
 }
