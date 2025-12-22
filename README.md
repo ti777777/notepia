@@ -50,6 +50,7 @@ Notepia is available on Docker Hub.
 docker run -d \
   --name notepia \
   -p 8080:8080 \
+  -v notepia:/usr/local/app/bin \
   -e APP_SECRET=change-me-to-a-secure-random-string \
   notepia/notepia
 ```
@@ -71,6 +72,8 @@ services:
     container_name: notepia
     ports:
       - "8080:8080"
+    volumes:
+      - "notepia:/usr/local/app/bin"
     environment:
       APP_SECRET: change-me-to-a-secure-random-string
     restart: unless-stopped
