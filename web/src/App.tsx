@@ -103,8 +103,9 @@ function App() {
           <Route path='/workspace-setup' element={<Setup />} />
           <Route path='workspaces' element={<WorkspaceLoader />} />
           <Route path='workspaces/:workspaceId' element={<WorkspaceLayout />}>
-            <Route path='notes/:noteId' element={<NoteDetailPage />} ></Route>
-            <Route path='notes' element={<NotesPage />}></Route>
+            <Route path='notes' element={<NotesPage />}>
+              <Route path=':noteId' element={<NoteDetailPage />} ></Route>
+            </Route>
             <Route path='files' element={<FilesPage />}></Route>
             <Route path='calendar' element={<CalendarListPage />}></Route>
             <Route path='calendar/:calendarId' element={<CalendarPage />}>
