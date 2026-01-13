@@ -84,10 +84,6 @@ const NotesPage = () => {
         initialPageParam: 1
     })
 
-    useEffect(() => {
-        refetch();
-    }, [debouncedQuery, refetch]);
-
     const loadMoreRef = useCallback((node: HTMLDivElement | null) => {
         if (observerRef.current) {
             observerRef.current.disconnect();
