@@ -32,7 +32,6 @@ const NoteDetailMenu: FC<NoteDetailMenuProps> = ({ note }) => {
             try {
                 await queryClient.invalidateQueries({ queryKey: ['notes', workspaceId] })
                 navigate(`/workspaces/${workspaceId}/notes`)
-                addToast({ title: t('messages.noteDeleted'), type: 'success' })
             } catch (error) {
                 addToast({ title: t('messages.deleteNoteFailed'), type: 'error' })
             }
@@ -48,7 +47,6 @@ const NoteDetailMenu: FC<NoteDetailMenuProps> = ({ note }) => {
         onSuccess: async () => {
             try {
                 await queryClient.invalidateQueries({ queryKey: ['note', workspaceId, note.id] })
-                addToast({ title: t('messages.visibilityUpdated'), type: 'success' })
             } catch (error) {
                 addToast({ title: t('messages.updateVisibilityFailed'), type: 'error' })
             }
