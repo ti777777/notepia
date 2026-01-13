@@ -108,7 +108,7 @@ const NotesPage = () => {
 
     return <>
         <div className="flex h-screen">
-            <div ref={scrollContainerRef} className="w-full xl:w-[360px] h-full overflow-auto shrink-0 bg-neutral-200 shadow-inner">
+            <div ref={scrollContainerRef} className="w-full xl:w-[360px] h-full overflow-auto shrink-0 bg-neutral-200 dark:bg-neutral-950 shadow-inner">
                 <div>{
                     isSearchVisible ? < div className="px-4 pt-4">
                         <div className="w-full flex items-center gap-2 py-2 px-3 rounded-xl shadow-inner border dark:border-neutral-600 bg-neutral-100 dark:bg-neutral-800 dark:text-neutral-100">
