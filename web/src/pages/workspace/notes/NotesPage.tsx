@@ -67,15 +67,19 @@ const NotesPage = () => {
         isFetchingNextPage,
         refetch
     } = useInfiniteQuery({
-        queryKey: ['notes', currentWorkspaceId],
-        queryFn: ({ pageParam = 1 }: { pageParam?: unknown }) =>
-            getNotes(currentWorkspaceId, Number(pageParam), PAGE_SIZE, debouncedQuery),
+        queryKey: ['notes', currentWorkspaceId, debouncedQuery],
+        queryFn: async ({ pageParam = 1 }: { pageParam?: unknown }) => {
+            const result = await getNotes(currentWorkspaceId, Number(pageParam), PAGE_SIZE, debouncedQuery)
+            return result
+        },
         enabled: !!currentWorkspaceId,
         getNextPageParam: (lastPage, allPages) => {
-            console.log(lastPage)
-            console.log(allPages)
-            if (!lastPage || lastPage.length < PAGE_SIZE) return undefined;
-            return allPages.length + 1;
+            if (lastPage.length === PAGE_SIZE) {
+                const nextPage = allPages.length + 1;
+                return nextPage;
+            }
+
+            return undefined;
         },
         refetchOnWindowFocus: false,
         staleTime: 0,
@@ -168,10 +172,13 @@ const NotesPage = () => {
                     <NoteListSkeleton />
                 ) : (
                     <>
-                        <NoteList notes={notes} maxNodes={3} getLinkTo={(note) => `${note.id}`} />         
+                        <NoteList notes={notes} maxNodes={3} getLinkTo={(note) => `${note.id}`} />
+
                         <div ref={loadMoreRef} className="h-4" ></div>
                         {isFetchingNextPage && <NoteMasonrySkeleton count={3} />}
-                        {!isLoading && !hasNextPage && <div className="text-center py-4 text-gray-400">{t("messages.noMoreNotes")}</div>}
+                        {!isLoading && !hasNextPage && notes.length > 0 && (
+                            <div className="text-center py-4 text-gray-400">{t("messages.noMoreNotes")}</div>
+                        )}
                     </>
                 )}
             </div>
