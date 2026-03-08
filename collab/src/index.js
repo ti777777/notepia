@@ -12,7 +12,7 @@ const db = createDB()
 const server = Server.configure({
   port: PORT,
   extensions: [
-    new AuthExtension(),
+    new AuthExtension({ db }),
     new DatabaseExtension({ db }),
   ],
   async onListen() {

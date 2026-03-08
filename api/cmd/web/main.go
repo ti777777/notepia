@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"log"
-	"net/url"
 	"os"
 	"os/signal"
 	"syscall"
@@ -36,16 +35,7 @@ func main() {
 		log.Fatalf("Failed to initialize storage: %v", err)
 	}
 
-	// Parse collab service URL
-	collabURLStr := config.C.GetString(config.COLLAB_URL)
-	collabURL, err := url.Parse(collabURLStr)
-	if err != nil {
-		log.Fatalf("Invalid COLLAB_URL: %v", err)
-	}
-	log.Printf("Collab service URL: %s", collabURLStr)
-
-	// Setup server with reverse proxy to collab service
-	e, err := server.New(db, storage, collabURL)
+	e, err := server.New(db, storage)
 	if err != nil {
 		log.Fatalf("Failed to setup server: %v", err)
 	}

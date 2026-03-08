@@ -6,6 +6,8 @@ export function createSqliteDB(dsn) {
   db.pragma('busy_timeout = 5000');
 
   const stmts = {
+    findUser: db.prepare('SELECT * FROM users WHERE id = ?'),
+    isWorkspaceMember: db.prepare('SELECT 1 FROM workspace_users WHERE user_id = ? AND workspace_id = ? LIMIT 1'),
     findNote: db.prepare('SELECT * FROM notes WHERE id = ?'),
     updateNote: db.prepare(
       'UPDATE notes SET title = ?, content = ?, updated_at = ?, updated_by = ? WHERE id = ?'
@@ -28,6 +30,12 @@ export function createSqliteDB(dsn) {
   };
 
   return {
+    findUser(id) {
+      return stmts.findUser.get(id) || null
+    },
+    isWorkspaceMember(userId, workspaceId) {
+      return !!stmts.isWorkspaceMember.get(userId, workspaceId)
+    },
     findNote(id) {
       return stmts.findNote.get(id) || null;
     },
