@@ -1,8 +1,23 @@
 services:
+  collabreef-nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: nginx-runtime
+    image: collabreef/collabreef-nginx:local
+    container_name: collabreef-nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - collabreef-web
+      - collabreef-collab
+    restart: unless-stopped
+
   collabreef-collab:
     build:
       context: .
       dockerfile: Dockerfile
+      target: app-runtime
     image: collabreef/collabreef:local
     container_name: collabreef-collab
     command: ["node", "collab/src/index.js"]
@@ -12,14 +27,17 @@ services:
       - PORT=3000
       - DB_DRIVER=sqlite3
       - DB_DSN=/usr/local/app/bin/collabreef.db
+      - APP_SECRET=${APP_SECRET}
     restart: unless-stopped
 
   collabreef-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: app-runtime
     image: collabreef/collabreef:local
     container_name: collabreef-web
     command: ["./web"]
-    ports:
-      - "8080:8080"
     volumes:
       - "./bin:/usr/local/app/bin"
     environment:
@@ -28,7 +46,6 @@ services:
       - DB_DSN=/usr/local/app/bin/collabreef.db
       - APP_DISABLE_SIGNUP=${APP_DISABLE_SIGNUP}
       - APP_SECRET=${APP_SECRET}
-      - COLLAB_URL=http://collabreef-collab:3000
     depends_on:
       collabreef-collab:
         condition: service_started

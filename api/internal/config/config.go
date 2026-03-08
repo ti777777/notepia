@@ -49,7 +49,6 @@ const (
 	SERVER_API_ROOT_PATH    = "server_api_root_path"
 	APP_DISABLE_SIGNUP      = "app_disable_signup"
 	APP_SECRET              = "app_secret"
-	COLLAB_URL              = "collab_url"
 )
 
 func Init() {
@@ -67,7 +66,6 @@ func Init() {
 	C.SetDefault(SERVER_API_ROOT_PATH, "/api/v1")
 	C.SetDefault(APP_DISABLE_SIGNUP, false)
 	C.SetDefault(APP_SECRET, "default_secret")
-	C.SetDefault(COLLAB_URL, "http://127.0.0.1:3000")
 
 	C.AutomaticEnv()
 }

@@ -24,6 +24,17 @@ export function createPostgresDB(dsn) {
   const pool = new Pool(parseDSN(dsn));
 
   return {
+    async findUser(id) {
+      const { rows } = await pool.query('SELECT * FROM users WHERE id = $1', [id])
+      return rows[0] || null
+    },
+    async isWorkspaceMember(userId, workspaceId) {
+      const { rows } = await pool.query(
+        'SELECT 1 FROM workspace_users WHERE user_id = $1 AND workspace_id = $2 LIMIT 1',
+        [userId, workspaceId]
+      )
+      return rows.length > 0
+    },
     async findNote(id) {
       const { rows } = await pool.query('SELECT * FROM notes WHERE id = $1', [id]);
       return rows[0] || null;

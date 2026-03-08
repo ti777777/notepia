@@ -23,7 +23,7 @@ RUN npm install --omit=dev
 
 # ---------- Stage 3: build Go backend ----------
 FROM golang:1.25-alpine AS backend
-WORKDIR /app
+WORKDIR /app/api
 
 # Accept version as build argument
 ARG APP_VERSION=dev
@@ -36,11 +36,10 @@ RUN apk add --no-cache \
     # Required for Alpine
     musl-dev
 
-COPY go.mod go.sum ./
+COPY api/go.mod api/go.sum ./
 RUN go mod download
 
-COPY . .
-COPY --from=frontend /app/web/dist /app/internal/server/dist
+COPY api/ .
 
 # Build web and cli binaries
 RUN --mount=type=cache,target=/root/.cache/go-build \
@@ -55,15 +54,15 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
     -ldflags "-X main.Version=${APP_VERSION}" \
     -o /out/cli ./cmd/cli/main.go
 
-# ---------- Stage 4: final runtime ----------
-FROM node:20-alpine
+# ---------- Stage 4: app runtime (Go API + Collab service) ----------
+FROM node:20-alpine AS app-runtime
 WORKDIR /usr/local/app
 
 RUN apk add --no-cache tzdata
 
 ENV TZ="UTC"
 
-COPY ./migrations /usr/local/app/migrations
+COPY ./api/migrations /usr/local/app/migrations
 
 # Copy Go binaries
 COPY --from=backend /out/web ./web
@@ -76,3 +75,8 @@ COPY collab/package.json ./collab/package.json
 
 RUN mkdir -p ./bin
 VOLUME /usr/local/app/bin
+
+# ---------- Stage 5: nginx with static frontend ----------
+FROM nginx:alpine AS nginx-runtime
+COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=frontend /app/web/dist /usr/share/nginx/html
