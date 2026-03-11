@@ -82,21 +82,17 @@ func (h Handler) GetPublicNotes(c echo.Context) error {
 		}
 	}
 
-	query := c.QueryParam("query")
-
 	filter := model.NoteFilter{
-		WorkspaceID: "",
-		PageSize:    pageSize,
-		PageNumber:  pageNumber,
-		Query:       query,
+		PageSize:   pageSize,
+		PageNumber: pageNumber,
 	}
 
 	notes, err := h.db.FindNotes(filter)
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
-	res := make([]GetNoteResponse, 0)
 
+	res := make([]GetNoteResponse, 0)
 	for _, b := range notes {
 		res = append(res, GetNoteResponse{
 			ID:         b.ID,
@@ -108,55 +104,6 @@ func (h Handler) GetPublicNotes(c echo.Context) error {
 			UpdatedAt:  b.UpdatedAt,
 			UpdatedBy:  h.getUserNameByID(b.UpdatedBy),
 		})
-	}
-
-	return c.JSON(http.StatusOK, res)
-}
-
-func (h Handler) GetPublicNote(c echo.Context) error {
-	id := c.Param("id")
-	if id == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "Note id is required")
-	}
-
-	b := model.Note{ID: id}
-	b, err := h.db.FindNote(b)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-	}
-
-	var user *model.User
-	if u := c.Get("user"); u != nil {
-		if uu, ok := u.(model.User); ok {
-			user = &uu
-		}
-	}
-
-	isVisible := false
-
-	switch b.Visibility {
-	case "public":
-		isVisible = true
-	case "workspace":
-		// For workspace visibility, check if user is a member of that workspace
-		isVisible = user != nil && h.isUserWorkspaceMember(user.ID, b.WorkspaceID)
-	case "private":
-		isVisible = user != nil && b.CreatedBy == user.ID
-	}
-
-	if !isVisible {
-		return echo.NewHTTPError(http.StatusForbidden, "you do not have permission to see this Note")
-	}
-
-	res := GetNoteResponse{
-		ID:         b.ID,
-		Visibility: b.Visibility,
-		Title:      b.Title,
-		Content:    b.Content,
-		CreatedAt:  b.CreatedAt,
-		CreatedBy:  h.getUserNameByID(b.CreatedBy),
-		UpdatedAt:  b.UpdatedAt,
-		UpdatedBy:  h.getUserNameByID(b.UpdatedBy),
 	}
 
 	return c.JSON(http.StatusOK, res)

@@ -1,8 +1,10 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import SignIn from './pages/auth/SignInPage';
-import SignUp from './pages/auth/SignUpPage'
+import SignUp from './pages/auth/SignUpPage';
+import ExplorePage from './pages/explore/ExplorePage';
 import NotFound from './pages/errors/NotFoundPage';
 import RequireAuth from './components/requireauth/RequireAuth';
+import NotesLayout from './pages/workspace/notes/NotesLayout';
 import NotesPage from './pages/workspace/notes/NotesPage';
 import Setup from './pages/workspacesetup/WorkspaceSetupPage';
 import NoteDetailPage from './pages/workspace/notes/NoteDetailPage';
@@ -11,21 +13,6 @@ import { Toast } from './components/toast/Toast'
 import { useToastStore } from './stores/toast';
 import WorkspaceLayout from './components/workspacelayout/WorkspaceLayout';
 import WorkspaceLoader from './components/workspaceloader/WorkspaceLoader';
-import PublicLayout from './components/publiclayout/PublicLayout';
-import ExploreNotesPage from './pages/explore/ExploreNotesPage';
-import ExploreNoteDetailPage from './pages/explore/ExploreNoteDetailPage';
-import ExploreCalendarListPage from './pages/explore/ExploreCalendarListPage';
-import ExploreMapListPage from './pages/explore/ExploreMapListPage';
-import ExploreKanbanListPage from './pages/explore/ExploreKanbanListPage';
-import ExploreCalendarPage from './pages/explore/ExploreCalendarPage';
-import ExploreCalendarSlotDetailPage from './pages/explore/ExploreCalendarSlotDetailPage';
-import ExploreMapPage from './pages/explore/ExploreMapPage';
-import ExploreMapMarkerDetailPage from './pages/explore/ExploreMapMarkerDetailPage';
-import ExploreKanbanPage from './pages/explore/ExploreKanbanPage';
-import ExploreWhiteboardListPage from './pages/explore/ExploreWhiteboardListPage';
-import ExploreWhiteboardPage from './pages/explore/ExploreWhiteboardPage';
-import ExploreSpreadsheetListPage from './pages/explore/ExploreSpreadsheetListPage';
-import ExploreSpreadsheetPage from './pages/explore/ExploreSpreadsheetPage';
 import FilesPage from './pages/workspace/files/FilesPage';
 import CalendarListPage from './pages/workspace/views/CalendarListPage';
 import MapListPage from './pages/workspace/views/MapListPage';
@@ -78,33 +65,16 @@ function App() {
   return (
     <>
       <Routes location={location}>
-        <Route path='/share' element={<PublicLayout />}>
-          <Route path='notes' element={<ExploreNotesPage />}>
-            <Route path=':noteId' element={<ExploreNoteDetailPage />} />
-          </Route>
-          <Route path='calendar' element={<ExploreCalendarListPage />} />
-          <Route path='calendar/:calendarId' element={<ExploreCalendarPage />}>
-            <Route path='slot/:slotId' element={<ExploreCalendarSlotDetailPage />} />
-          </Route>
-          <Route path='map' element={<ExploreMapListPage />} />
-          <Route path='map/:mapId' element={<ExploreMapPage />}>
-            <Route path='marker/:markerId' element={<ExploreMapMarkerDetailPage />} />
-          </Route>
-          <Route path='kanban' element={<ExploreKanbanListPage />} />
-          <Route path='kanban/:kanbanId' element={<ExploreKanbanPage />} />
-          <Route path='whiteboard' element={<ExploreWhiteboardListPage />} />
-          <Route path='whiteboard/:whiteboardId' element={<ExploreWhiteboardPage />} />
-          <Route path='spreadsheet' element={<ExploreSpreadsheetListPage />} />
-          <Route path='spreadsheet/:spreadsheetId' element={<ExploreSpreadsheetPage />} />
-        </Route>
         <Route path='signin' element={<SignIn />}></Route>
         <Route path='signup' element={<SignUp />}></Route>
+        <Route path='explore' element={<ExplorePage />}></Route>
         <Route path='/' element={<RequireAuth />}>
           <Route index element={<Navigate to="/workspaces" replace />} />
           <Route path='/workspace-setup' element={<Setup />} />
           <Route path='workspaces' element={<WorkspaceLoader />} />
           <Route path='workspaces/:workspaceId' element={<WorkspaceLayout />}>
-            <Route path='notes' element={<NotesPage />}>
+            <Route path='notes' element={<NotesLayout />}>
+              <Route index element={<NotesPage />} />
               <Route path=':noteId' element={<NoteDetailPage />} ></Route>
             </Route>
             <Route path='files' element={<FilesPage />}></Route>

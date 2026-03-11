@@ -12,13 +12,9 @@ export interface NoteData {
   visibility?: Visibility;
 }
 
-export const getPublicNotes = async (pageNum: number, pageSize: number, query: string) => {
-  const response = await axios.get(`/api/v1/public/notes?pageSize=${pageSize}&pageNumber=${pageNum}&query=${query}`, { withCredentials: true });
-  return response.data;
-};
 
-export const getPublicNote = async (noteId: string) => {
-  const response = await axios.get(`/api/v1/public/notes/${noteId}`, { withCredentials: true });
+export const getPublicNotes = async (pageNum: number, pageSize: number) => {
+  const response = await axios.get(`/api/v1/explore/notes?pageSize=${pageSize}&pageNumber=${pageNum}`);
   return response.data;
 };
 
