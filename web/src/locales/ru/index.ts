@@ -768,6 +768,11 @@ export default {
     "ThreadsEmbed":"Threads публикация",
     "InstagramEmbed":"Instagram публикация",
     "TiktokEmbed":"TikTok видео",
+    "CalendarEmbed":"Встроить календарь",
+    "MapEmbed":"Встроить карту",
+    "SheetEmbed":"Встроить таблицу",
+    "KanbanEmbed":"Встроить канбан",
+    "WhiteboardEmbed":"Встроить доску",
     "Video":"Видео",
     "table":{
         "name": "Таблица",

@@ -7,7 +7,7 @@ import { BubbleMenu } from "@tiptap/react/menus"
 import { TableKit } from "@tiptap/extension-table"
 import { FC, useMemo, useRef, useEffect } from "react"
 import { useTranslation } from "react-i18next"
-import { GripVertical, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6, Image, List, ListTodo, Paperclip, Quote, Table, Type, Video, Youtube } from 'lucide-react'
+import { GripVertical, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6, Image, List, ListTodo, Paperclip, Quote, Table, Type, Video, Youtube, Calendar, Map, Sheet, Kanban, PenLine } from 'lucide-react'
 import { CommandItem, SlashCommand } from './extensions/slashcommand/SlashCommand'
 import { Attachment } from './extensions/attachment/Attachment'
 import { ImageNode } from './extensions/imagenode/ImageNode'
@@ -17,6 +17,11 @@ import { ThreadsEmbed } from './extensions/threadsembed/ThreadsEmbed'
 import { InstagramEmbed } from './extensions/instagramembed/InstagramEmbed'
 import { TiktokEmbed } from './extensions/tiktokembed/TiktokEmbed'
 import { VideoNode } from './extensions/videonode/VideoNode'
+import { CalendarEmbed } from './extensions/calendarembed/CalendarEmbed'
+import { MapEmbed } from './extensions/mapembed/MapEmbed'
+import { SheetEmbed } from './extensions/sheetembed/SheetEmbed'
+import { KanbanEmbed } from './extensions/kanbanembed/KanbanEmbed'
+import { WhiteboardEmbed } from './extensions/whiteboardembed/WhiteboardEmbed'
 import { uploadFile, listFiles } from '@/api/file'
 import useCurrentWorkspaceId from '@/hooks/use-currentworkspace-id'
 import { NoteData } from '@/api/note'
@@ -132,6 +137,11 @@ const Editor: FC<Props> = ({
       ThreadsEmbed,
       InstagramEmbed,
       TiktokEmbed,
+      CalendarEmbed,
+      MapEmbed,
+      SheetEmbed,
+      KanbanEmbed,
+      WhiteboardEmbed,
       VideoNode.configure({
         upload: async (f: File, onProgress?: (percent: number) => void) => {
           const res = await uploadFile(currentWorkspaceId, f, onProgress)
@@ -233,6 +243,41 @@ const Editor: FC<Props> = ({
                 keywords: ["tiktok", "tik", "tok", "short", "video", "social", "embed"],
                 command: ({ editor }: any) =>
                   editor?.chain().focus().setTiktokEmbed({ url: null }).run()
+              },
+              {
+                icon: <Calendar size={16} />,
+                label: t("editor.CalendarEmbed"),
+                keywords: ["calendar", "schedule", "embed"],
+                command: ({ editor }: any) =>
+                  editor?.chain().focus().setCalendarEmbed({ viewId: null }).run()
+              },
+              {
+                icon: <Map size={16} />,
+                label: t("editor.MapEmbed"),
+                keywords: ["map", "location", "embed"],
+                command: ({ editor }: any) =>
+                  editor?.chain().focus().setMapEmbed({ viewId: null }).run()
+              },
+              {
+                icon: <Sheet size={16} />,
+                label: t("editor.SheetEmbed"),
+                keywords: ["sheet", "spreadsheet", "embed"],
+                command: ({ editor }: any) =>
+                  editor?.chain().focus().setSheetEmbed({ viewId: null }).run()
+              },
+              {
+                icon: <Kanban size={16} />,
+                label: t("editor.KanbanEmbed"),
+                keywords: ["kanban", "board", "embed"],
+                command: ({ editor }: any) =>
+                  editor?.chain().focus().setKanbanEmbed({ viewId: null }).run()
+              },
+              {
+                icon: <PenLine size={16} />,
+                label: t("editor.WhiteboardEmbed"),
+                keywords: ["whiteboard", "draw", "embed"],
+                command: ({ editor }: any) =>
+                  editor?.chain().focus().setWhiteboardEmbed({ viewId: null }).run()
               },
               {
                 icon: <Table size={16} />,

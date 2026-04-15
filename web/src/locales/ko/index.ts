@@ -768,6 +768,11 @@ export default {
     "ThreadsEmbed":"Threads 삽입",
     "InstagramEmbed":"Instagram 삽입",
     "TiktokEmbed":"TikTok 삽입",
+    "CalendarEmbed":"캘린더 삽입",
+    "MapEmbed":"지도 삽입",
+    "SheetEmbed":"스프레드시트 삽입",
+    "KanbanEmbed":"칸반 삽입",
+    "WhiteboardEmbed":"화이트보드 삽입",
     "Video":"동영상",
     "table":{
         "name": "표",

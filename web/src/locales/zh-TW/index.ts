@@ -866,6 +866,11 @@ export default {
     "ThreadsEmbed":"Threads 嵌入",
     "InstagramEmbed":"Instagram 嵌入",
     "TiktokEmbed":"TikTok 嵌入",
+    "CalendarEmbed":"日曆嵌入",
+    "MapEmbed":"地圖嵌入",
+    "SheetEmbed":"試算表嵌入",
+    "KanbanEmbed":"看板嵌入",
+    "WhiteboardEmbed":"白板嵌入",
     "Video":"影片",
     "table":{
         "name": "表格",

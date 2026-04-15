@@ -190,6 +190,12 @@ const Renderer: React.FC<RendererProps> = ({ content, maxNodes }) => {
                 return <InstagramRendererEmbed key={key} url={node.attrs?.url} />
             case 'tiktokEmbed':
                 return <TiktokRendererEmbed key={key} url={node.attrs?.url} />
+            case 'calendarEmbed':
+            case 'mapEmbed':
+            case 'sheetEmbed':
+            case 'kanbanEmbed':
+            case 'whiteboardEmbed':
+                return null
             case 'video':
                 return <div key={key} className="w-full rounded overflow-hidden">
                     <video className="w-full max-h-[620px]" src={node.attrs?.src} controls />

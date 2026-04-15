@@ -768,6 +768,11 @@ export default {
     "ThreadsEmbed":"تضمين ثريدز",
     "InstagramEmbed":"تضمين إنستغرام",
     "TiktokEmbed":"تضمين تيك توك",
+    "CalendarEmbed":"تضمين التقويم",
+    "MapEmbed":"تضمين الخريطة",
+    "SheetEmbed":"تضمين جدول البيانات",
+    "KanbanEmbed":"تضمين كانبان",
+    "WhiteboardEmbed":"تضمين السبورة",
     "Video":"فيديو",
     "table":{
         "name": "جدول",

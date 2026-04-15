@@ -768,6 +768,11 @@ export default {
     "ThreadsEmbed":"Threads埋め込み",
     "InstagramEmbed":"Instagram埋め込み",
     "TiktokEmbed":"TikTok埋め込み",
+    "CalendarEmbed":"カレンダー埋め込み",
+    "MapEmbed":"マップ埋め込み",
+    "SheetEmbed":"スプレッドシート埋め込み",
+    "KanbanEmbed":"カンバン埋め込み",
+    "WhiteboardEmbed":"ホワイトボード埋め込み",
     "Video":"動画",
     "table":{
         "name": "テーブル",

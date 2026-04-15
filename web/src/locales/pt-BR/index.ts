@@ -768,6 +768,11 @@ export default {
     "ThreadsEmbed":"Incorporar Threads",
     "InstagramEmbed":"Incorporar Instagram",
     "TiktokEmbed":"Incorporar TikTok",
+    "CalendarEmbed":"Incorporar calendário",
+    "MapEmbed":"Incorporar mapa",
+    "SheetEmbed":"Incorporar planilha",
+    "KanbanEmbed":"Incorporar kanban",
+    "WhiteboardEmbed":"Incorporar quadro branco",
     "Video":"Vídeo",
     "table":{
         "name": "Tabela",

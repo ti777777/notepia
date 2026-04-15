@@ -1,0 +1,108 @@
+import { NodeViewProps, NodeViewWrapper } from "@tiptap/react"
+import { useState } from "react"
+import { Map, ChevronUp, ChevronDown, ExternalLink, Trash2 } from "lucide-react"
+import { useQuery } from "@tanstack/react-query"
+import { useNavigate } from "react-router-dom"
+import { getView, getViewObjects } from "@/api/view"
+import useCurrentWorkspaceId from "@/hooks/use-currentworkspace-id"
+import MapViewComponent from "@/components/views/map/MapViewComponent"
+import { TwoColumnContext } from "@/components/twocolumn/TwoColumn"
+import ViewBlockPicker from "../viewblockpicker/ViewBlockPicker"
+
+const mockTwoColumnCtx = {
+  isSidebarCollapsed: true,
+  toggleSidebar: () => {},
+  openBottomSheet: () => {},
+  breakpoint: 1024,
+}
+
+const MapEmbedComponent: React.FC<NodeViewProps> = ({ node, updateAttributes, selected, editor, deleteNode, getPos }) => {
+  const { viewId } = node.attrs
+  const workspaceId = useCurrentWorkspaceId()
+  const navigate = useNavigate()
+  const isEditable = editor.isEditable
+  const [showActions, setShowActions] = useState(false)
+
+  const { data: view } = useQuery({
+    queryKey: ['view', workspaceId, viewId],
+    queryFn: () => getView(workspaceId, viewId!),
+    enabled: !!workspaceId && !!viewId,
+  })
+
+  const { data: viewObjects } = useQuery({
+    queryKey: ['view-objects', workspaceId, viewId],
+    queryFn: () => getViewObjects(workspaceId, viewId!),
+    enabled: !!workspaceId && !!viewId,
+  })
+
+  const handleMoveUp = () => {
+    const pos = getPos()
+    if (pos === undefined) return
+    const { state } = editor
+    const $pos = state.doc.resolve(pos)
+    if ($pos.index() === 0) return
+    const nodeBefore = $pos.nodeBefore
+    if (!nodeBefore) return
+    editor.view.dispatch(state.tr.replaceWith(pos - nodeBefore.nodeSize, pos + node.nodeSize, [node, nodeBefore]))
+  }
+
+  const handleMoveDown = () => {
+    const pos = getPos()
+    if (pos === undefined) return
+    const { state } = editor
+    const $pos = state.doc.resolve(pos)
+    if ($pos.index() >= $pos.parent.childCount - 1) return
+    const nodeAfterPos = pos + node.nodeSize
+    const nodeAfter = state.doc.resolve(nodeAfterPos).nodeAfter
+    if (!nodeAfter) return
+    editor.view.dispatch(state.tr.replaceWith(pos, nodeAfterPos + nodeAfter.nodeSize, [nodeAfter, node]))
+  }
+
+  if (!viewId) {
+    return (
+      <NodeViewWrapper>
+        <ViewBlockPicker
+          type="map"
+          workspaceId={workspaceId}
+          icon={<Map size={18} />}
+          label="Map"
+          onSelect={(id) => updateAttributes({ viewId: id })}
+        />
+      </NodeViewWrapper>
+    )
+  }
+
+  return (
+    <NodeViewWrapper>
+      <div
+        className={`relative rounded border dark:border-neutral-700 overflow-hidden ${selected ? 'ring-2 ring-blue-500' : ''}`}
+        style={{ height: 420 }}
+        onMouseEnter={() => isEditable && setShowActions(true)}
+        onMouseLeave={() => setShowActions(false)}
+      >
+        <TwoColumnContext.Provider value={mockTwoColumnCtx}>
+          <MapViewComponent view={view} viewObjects={viewObjects || []} />
+        </TwoColumnContext.Provider>
+
+        {isEditable && (showActions || selected) && (
+          <div className="absolute top-2 right-2 flex gap-1 z-50">
+            <button onClick={handleMoveUp} className="p-2 bg-white dark:bg-neutral-800 hover:bg-gray-100 dark:hover:bg-neutral-700 rounded-lg shadow-lg border border-gray-200 dark:border-neutral-600 transition-colors" title="Move up">
+              <ChevronUp size={16} className="text-gray-700 dark:text-gray-300" />
+            </button>
+            <button onClick={handleMoveDown} className="p-2 bg-white dark:bg-neutral-800 hover:bg-gray-100 dark:hover:bg-neutral-700 rounded-lg shadow-lg border border-gray-200 dark:border-neutral-600 transition-colors" title="Move down">
+              <ChevronDown size={16} className="text-gray-700 dark:text-gray-300" />
+            </button>
+            <button onClick={() => navigate(`/workspaces/${workspaceId}/map/${viewId}`)} className="p-2 bg-white dark:bg-neutral-800 hover:bg-gray-100 dark:hover:bg-neutral-700 rounded-lg shadow-lg border border-gray-200 dark:border-neutral-600 transition-colors" title="Open full view">
+              <ExternalLink size={16} className="text-gray-700 dark:text-gray-300" />
+            </button>
+            <button onClick={deleteNode} className="p-2 bg-white dark:bg-neutral-800 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg shadow-lg border border-gray-200 dark:border-neutral-600 transition-colors" title="Delete">
+              <Trash2 size={16} className="text-red-600 dark:text-red-400" />
+            </button>
+          </div>
+        )}
+      </div>
+    </NodeViewWrapper>
+  )
+}
+
+export default MapEmbedComponent

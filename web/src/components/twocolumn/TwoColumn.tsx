@@ -10,7 +10,7 @@ interface TwoColumnContextValue {
     breakpoint: number
 }
 
-const TwoColumnContext = createContext<TwoColumnContextValue | undefined>(undefined)
+export const TwoColumnContext = createContext<TwoColumnContextValue | undefined>(undefined)
 
 /**
  * Hook to access TwoColumn context

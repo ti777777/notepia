@@ -866,6 +866,11 @@ export default {
     "ThreadsEmbed":"Threads Embed",
     "InstagramEmbed":"Instagram Embed",
     "TiktokEmbed":"TikTok Embed",
+    "CalendarEmbed":"Calendar Embed",
+    "MapEmbed":"Map Embed",
+    "SheetEmbed":"Sheet Embed",
+    "KanbanEmbed":"Kanban Embed",
+    "WhiteboardEmbed":"Whiteboard Embed",
     "Video":"Video",
     "table":{
         "name": "Table",
