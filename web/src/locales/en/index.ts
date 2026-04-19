@@ -862,16 +862,21 @@ export default {
     "TaskList":"Task List",
     "Attachment":"Attachment",
     "Image":"Image",
-    "YoutubeEmbed":"YouTube Embed",
-    "ThreadsEmbed":"Threads Embed",
-    "InstagramEmbed":"Instagram Embed",
-    "TiktokEmbed":"TikTok Embed",
+    "YoutubeEmbed":"YouTube",
+    "ThreadsEmbed":"Threads",
+    "InstagramEmbed":"Instagram",
+    "TiktokEmbed":"TikTok",
     "CalendarNode":"Calendar Event",
     "LocationNode":"Location",
     "TagsNode":"Tags",
     "RatingNode":"Rating",
     "Video":"Video",
     "SubPage":"Page",
+    "MapView":"Map",
+    "CalendarView":"Calendar",
+    "KanbanView":"Kanban",
+    "WhiteboardView":"Whiteboard",
+    "SpreadsheetView":"Spreadsheet",
     "subPage":{
         "newPage": "New page"
     },
@@ -893,7 +898,8 @@ export default {
         "block": "Block",
         "media": "Media",
         "embed": "Embed",
-        "advanced": "Advanced"
+        "advanced": "Advanced",
+        "views": "Views"
     }
   },
 } as const;

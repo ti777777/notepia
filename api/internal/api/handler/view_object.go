@@ -54,37 +54,33 @@ func (h Handler) GetViewObjects(c echo.Context) error {
 
 	objectType := c.QueryParam("type")
 
-	// Verify view exists and belongs to workspace
-	view, err := h.db.FindView(model.View{ID: viewId, WorkspaceID: workspaceId})
-	if err != nil {
-		return echo.NewHTTPError(http.StatusNotFound, "View not found")
+	// Verify the view belongs to the workspace
+	if _, err := h.db.FindView(model.View{WorkspaceID: workspaceId, ID: viewId}); err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "view not found")
 	}
 
-	filter := model.ViewObjectFilter{
-		ViewID:     view.ID,
+	objects, err := h.db.FindViewObjects(model.ViewObjectFilter{
+		ViewID:     viewId,
 		ObjectType: objectType,
 		PageSize:   pageSize,
 		PageNumber: pageNumber,
-	}
-
-	viewObjects, err := h.db.FindViewObjects(filter)
+	})
 	if err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
 	res := []GetViewObjectResponse{}
-
-	for _, vo := range viewObjects {
+	for _, o := range objects {
 		res = append(res, GetViewObjectResponse{
-			ID:        vo.ID,
-			ViewID:    vo.ViewID,
-			Name:      vo.Name,
-			Type:      vo.Type,
-			Data:      vo.Data,
-			CreatedAt: vo.CreatedAt,
-			CreatedBy: h.getUserNameByID(vo.CreatedBy),
-			UpdatedAt: vo.UpdatedAt,
-			UpdatedBy: h.getUserNameByID(vo.UpdatedBy),
+			ID:        o.ID,
+			ViewID:    o.ViewID,
+			Name:      o.Name,
+			Type:      o.Type,
+			Data:      o.Data,
+			CreatedAt: o.CreatedAt,
+			CreatedBy: h.getUserNameByID(o.CreatedBy),
+			UpdatedAt: o.UpdatedAt,
+			UpdatedBy: h.getUserNameByID(o.UpdatedBy),
 		})
 	}
 
@@ -96,55 +92,39 @@ func (h Handler) GetViewObject(c echo.Context) error {
 	viewId := c.Param("viewId")
 	id := c.Param("id")
 
-	if workspaceId == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "Workspace id is required")
+	if workspaceId == "" || viewId == "" || id == "" {
+		return echo.NewHTTPError(http.StatusBadRequest, "workspace id, view id, and object id are required")
 	}
 
-	if viewId == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "View id is required")
+	// Verify the view belongs to the workspace
+	if _, err := h.db.FindView(model.View{WorkspaceID: workspaceId, ID: viewId}); err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "view not found")
 	}
 
-	if id == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "View object id is required")
-	}
-
-	// Verify view exists and belongs to workspace
-	_, err := h.db.FindView(model.View{ID: viewId, WorkspaceID: workspaceId})
+	o, err := h.db.FindViewObject(model.ViewObject{ID: id})
 	if err != nil {
-		return echo.NewHTTPError(http.StatusNotFound, "View not found")
+		return echo.NewHTTPError(http.StatusNotFound, "view object not found")
 	}
 
-	vo := model.ViewObject{ID: id, ViewID: viewId}
-	vo, err = h.db.FindViewObject(vo)
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-	}
-
-	res := GetViewObjectResponse{
-		ID:        vo.ID,
-		ViewID:    vo.ViewID,
-		Name:      vo.Name,
-		Type:      vo.Type,
-		Data:      vo.Data,
-		CreatedAt: vo.CreatedAt,
-		CreatedBy: h.getUserNameByID(vo.CreatedBy),
-		UpdatedAt: vo.UpdatedAt,
-		UpdatedBy: h.getUserNameByID(vo.UpdatedBy),
-	}
-
-	return c.JSON(http.StatusOK, res)
+	return c.JSON(http.StatusOK, GetViewObjectResponse{
+		ID:        o.ID,
+		ViewID:    o.ViewID,
+		Name:      o.Name,
+		Type:      o.Type,
+		Data:      o.Data,
+		CreatedAt: o.CreatedAt,
+		CreatedBy: h.getUserNameByID(o.CreatedBy),
+		UpdatedAt: o.UpdatedAt,
+		UpdatedBy: h.getUserNameByID(o.UpdatedBy),
+	})
 }
 
 func (h Handler) CreateViewObject(c echo.Context) error {
 	workspaceId := c.Param("workspaceId")
 	viewId := c.Param("viewId")
 
-	if workspaceId == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "workspace id is required")
-	}
-
-	if viewId == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "view id is required")
+	if workspaceId == "" || viewId == "" {
+		return echo.NewHTTPError(http.StatusBadRequest, "workspace id and view id are required")
 	}
 
 	var req CreateViewObjectRequest
@@ -153,31 +133,23 @@ func (h Handler) CreateViewObject(c echo.Context) error {
 	}
 
 	if err := c.Validate(req); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{
-			"error": "Validation failed: " + err.Error(),
-		})
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Validation failed: " + err.Error()})
 	}
 
-	// Verify view exists and belongs to workspace
-	view, err := h.db.FindView(model.View{ID: viewId, WorkspaceID: workspaceId})
+	// Verify the view belongs to the workspace
+	view, err := h.db.FindView(model.View{WorkspaceID: workspaceId, ID: viewId})
 	if err != nil {
-		return echo.NewHTTPError(http.StatusNotFound, "View not found")
+		return echo.NewHTTPError(http.StatusNotFound, "view not found")
 	}
 
-	// Validate object type based on view type
-	if view.Type == "calendar" && req.Type != "calendar_slot" {
-		return echo.NewHTTPError(http.StatusBadRequest, "Object type must be 'calendar_slot' for calendar views")
-	}
-	if view.Type == "map" && req.Type != "map_marker" {
-		return echo.NewHTTPError(http.StatusBadRequest, "Object type must be 'map_marker' for map views")
-	}
-	if view.Type == "kanban" && req.Type != "kanban_column" {
-		return echo.NewHTTPError(http.StatusBadRequest, "Object type must be 'kanban_column' for kanban views")
+	// Validate object type is compatible with view type
+	if !isCompatibleObjectType(view.Type, req.Type) {
+		return echo.NewHTTPError(http.StatusBadRequest, "object type is not compatible with view type")
 	}
 
 	user := c.Get("user").(model.User)
 
-	vo := model.ViewObject{
+	o := model.ViewObject{
 		ID:        util.NewId(),
 		ViewID:    viewId,
 		Name:      req.Name,
@@ -189,13 +161,11 @@ func (h Handler) CreateViewObject(c echo.Context) error {
 		UpdatedBy: user.ID,
 	}
 
-	err = h.db.CreateViewObject(vo)
-
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	if err := h.db.CreateViewObject(o); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	return c.JSON(http.StatusCreated, vo)
+	return c.JSON(http.StatusCreated, o)
 }
 
 func (h Handler) UpdateViewObject(c echo.Context) error {
@@ -203,16 +173,8 @@ func (h Handler) UpdateViewObject(c echo.Context) error {
 	viewId := c.Param("viewId")
 	id := c.Param("id")
 
-	if workspaceId == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "workspace id is required")
-	}
-
-	if viewId == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "view id is required")
-	}
-
-	if id == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "View object id is required")
+	if workspaceId == "" || viewId == "" || id == "" {
+		return echo.NewHTTPError(http.StatusBadRequest, "workspace id, view id, and object id are required")
 	}
 
 	var req UpdateViewObjectRequest
@@ -220,67 +182,42 @@ func (h Handler) UpdateViewObject(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	if err := c.Validate(req); err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]string{
-			"error": "Validation failed: " + err.Error(),
-		})
+	// Verify the view belongs to the workspace
+	if _, err := h.db.FindView(model.View{WorkspaceID: workspaceId, ID: viewId}); err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "view not found")
 	}
 
-	// Verify view exists and belongs to workspace
-	view, err := h.db.FindView(model.View{ID: viewId, WorkspaceID: workspaceId})
+	existing, err := h.db.FindViewObject(model.ViewObject{ID: id})
 	if err != nil {
-		return echo.NewHTTPError(http.StatusNotFound, "View not found")
-	}
-
-	existingViewObject, err := h.db.FindViewObject(model.ViewObject{ID: id, ViewID: viewId})
-
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
-	}
-
-	// Validate object type based on view type if type is being changed
-	if req.Type != "" && view.Type == "calendar" && req.Type != "calendar_slot" {
-		return echo.NewHTTPError(http.StatusBadRequest, "Object type must be 'calendar_slot' for calendar views")
-	}
-	if req.Type != "" && view.Type == "map" && req.Type != "map_marker" {
-		return echo.NewHTTPError(http.StatusBadRequest, "Object type must be 'map_marker' for map views")
-	}
-	if req.Type != "" && view.Type == "kanban" && req.Type != "kanban_column" {
-		return echo.NewHTTPError(http.StatusBadRequest, "Object type must be 'kanban_column' for kanban views")
+		return echo.NewHTTPError(http.StatusNotFound, "view object not found")
 	}
 
 	user := c.Get("user").(model.User)
 
-	vo := model.ViewObject{
-		ID:        existingViewObject.ID,
-		ViewID:    existingViewObject.ViewID,
+	updated := model.ViewObject{
+		ID:        existing.ID,
+		ViewID:    existing.ViewID,
 		Name:      req.Name,
 		Type:      req.Type,
 		Data:      req.Data,
-		CreatedAt: existingViewObject.CreatedAt,
-		CreatedBy: existingViewObject.CreatedBy,
+		CreatedAt: existing.CreatedAt,
+		CreatedBy: existing.CreatedBy,
 		UpdatedAt: time.Now().UTC().String(),
 		UpdatedBy: user.ID,
 	}
 
-	// If fields are empty, keep existing values
-	if vo.Name == "" {
-		vo.Name = existingViewObject.Name
+	if updated.Name == "" {
+		updated.Name = existing.Name
 	}
-	if vo.Type == "" {
-		vo.Type = existingViewObject.Type
-	}
-	if vo.Data == "" {
-		vo.Data = existingViewObject.Data
+	if updated.Type == "" {
+		updated.Type = existing.Type
 	}
 
-	err = h.db.UpdateViewObject(vo)
-
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	if err := h.db.UpdateViewObject(updated); err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
-	return c.JSON(http.StatusOK, vo)
+	return c.JSON(http.StatusOK, updated)
 }
 
 func (h Handler) DeleteViewObject(c echo.Context) error {
@@ -288,28 +225,43 @@ func (h Handler) DeleteViewObject(c echo.Context) error {
 	viewId := c.Param("viewId")
 	id := c.Param("id")
 
-	if id == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "View object id is required")
+	if workspaceId == "" || viewId == "" || id == "" {
+		return echo.NewHTTPError(http.StatusBadRequest, "workspace id, view id, and object id are required")
 	}
 
-	// Verify view exists and belongs to workspace
-	_, err := h.db.FindView(model.View{ID: viewId, WorkspaceID: workspaceId})
-	if err != nil {
-		return echo.NewHTTPError(http.StatusNotFound, "View not found")
+	// Verify the view belongs to the workspace
+	if _, err := h.db.FindView(model.View{WorkspaceID: workspaceId, ID: viewId}); err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "view not found")
 	}
 
-	viewObject := model.ViewObject{ID: id, ViewID: viewId}
-
-	_, err = h.db.FindViewObject(viewObject)
-
-	if err != nil {
-		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	if _, err := h.db.FindViewObject(model.ViewObject{ID: id}); err != nil {
+		return echo.NewHTTPError(http.StatusNotFound, "view object not found")
 	}
 
-	if err := h.db.DeleteViewObject(viewObject); err != nil {
+	if err := h.db.DeleteViewObject(model.ViewObject{ID: id}); err != nil {
 		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
 	}
 
 	return c.NoContent(http.StatusNoContent)
 }
 
+// isCompatibleObjectType checks if an object type is valid for a given view type
+func isCompatibleObjectType(viewType, objectType string) bool {
+	compatible := map[string][]string{
+		"calendar":    {"calendar_slot"},
+		"map":         {"map_marker"},
+		"kanban":      {"kanban_column"},
+		"whiteboard":  {"whiteboard_stroke", "whiteboard_shape", "whiteboard_text", "whiteboard_note", "whiteboard_view", "whiteboard_edge"},
+		"spreadsheet": {},
+	}
+	allowed, ok := compatible[viewType]
+	if !ok {
+		return false
+	}
+	for _, t := range allowed {
+		if t == objectType {
+			return true
+		}
+	}
+	return false
+}

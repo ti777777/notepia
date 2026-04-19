@@ -764,15 +764,20 @@ export default {
     "TaskList":"قائمة المهام",
     "Attachment":"مرفق",
     "Image":"صورة",
-    "YoutubeEmbed":"تضمين يوتيوب",
-    "ThreadsEmbed":"تضمين ثريدز",
-    "InstagramEmbed":"تضمين إنستغرام",
-    "TiktokEmbed":"تضمين تيك توك",
+    "YoutubeEmbed":"يوتيوب",
+    "ThreadsEmbed":"ثريدز",
+    "InstagramEmbed":"إنستغرام",
+    "TiktokEmbed":"تيك توك",
     "CalendarNode":"حدث التقويم",
     "LocationNode":"موقع",
     "TagsNode":"وسوم",
     "RatingNode":"تقييم",
     "Video":"فيديو",
+    "MapView":"خريطة",
+    "CalendarView":"تقويم",
+    "KanbanView":"كانبان",
+    "WhiteboardView":"سبورة",
+    "SpreadsheetView":"جدول بيانات",
     "table":{
         "name": "جدول",
         "deleteColumn": "حذف العمود",
@@ -791,7 +796,8 @@ export default {
         "block": "كتلة",
         "media": "وسائط",
         "embed": "تضمين",
-        "advanced": "متقدم"
+        "advanced": "متقدم",
+        "views": "العروض"
     }
   },
 } as const;

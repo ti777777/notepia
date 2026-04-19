@@ -5,7 +5,6 @@ import { useMutation, useQuery } from "@tanstack/react-query"
 import { useWorkspaceStore } from "@/stores/workspace"
 import { deleteWorkspace, updateWorkspace, getWorkspaceMembers, inviteMember, updateMemberRole, removeMember } from "@/api/workspace"
 import { useEffect, useState } from "react"
-import SidebarButton from "@/components/sidebar/SidebarButton"
 import { Loader, RotateCcw, Trash2, UserPlus, X } from "lucide-react"
 import OneColumn from "@/components/onecolumn/OneColumn"
 import { useCurrentUserStore } from "@/stores/current-user"
@@ -150,7 +149,6 @@ const Settings = () => {
             <div className="flex flex-col min-h-screen">
                 <div className="py-2.5 flex items-center justify-between ">
                     <div className="flex gap-3 items-center sm:text-xl font-semibold h-10">
-                        <SidebarButton />
                         {t("menu.workspaceSettings")}
                     </div>
                 </div>

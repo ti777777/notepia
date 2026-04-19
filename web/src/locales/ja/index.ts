@@ -764,15 +764,20 @@ export default {
     "TaskList":"タスクリスト",
     "Attachment":"添付ファイル",
     "Image":"画像",
-    "YoutubeEmbed":"YouTube埋め込み",
-    "ThreadsEmbed":"Threads埋め込み",
-    "InstagramEmbed":"Instagram埋め込み",
-    "TiktokEmbed":"TikTok埋め込み",
+    "YoutubeEmbed":"YouTube",
+    "ThreadsEmbed":"Threads",
+    "InstagramEmbed":"Instagram",
+    "TiktokEmbed":"TikTok",
     "CalendarNode":"カレンダーイベント",
     "LocationNode":"場所",
     "TagsNode":"タグ",
     "RatingNode":"評価",
     "Video":"動画",
+    "MapView":"マップ",
+    "CalendarView":"カレンダー",
+    "KanbanView":"カンバン",
+    "WhiteboardView":"ホワイトボード",
+    "SpreadsheetView":"スプレッドシート",
     "table":{
         "name": "テーブル",
         "deleteColumn": "列を削除",
@@ -791,7 +796,8 @@ export default {
         "block": "ブロック",
         "media": "メディア",
         "embed": "埋め込み",
-        "advanced": "詳細"
+        "advanced": "詳細",
+        "views": "ビュー"
     }
   },
 } as const;

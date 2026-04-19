@@ -1,97 +1,33 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { getNotesForViewObject } from '../../../api/view';
-import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import { TaskItem, TaskList } from '@tiptap/extension-list';
-import { TableKit } from '@tiptap/extension-table';
-import { Attachment } from '../../editor/extensions/attachment/Attachment';
-import { ImageNode } from '../../editor/extensions/imagenode/ImageNode';
+import { FileText } from 'lucide-react';
 
 interface NoteOverlayProps {
     viewObjectId: string;
+    name?: string;
     position: { x: number; y: number };
     width: number;
     viewport: { x: number; y: number; zoom: number };
     workspaceId?: string;
     viewId: string;
     isSelected?: boolean;
-    isPublic?: boolean;
     onHeightChange?: (viewObjectId: string, height: number) => void;
 }
 
-const NoteOverlay: React.FC<NoteOverlayProps> = ({ viewObjectId, position, width, viewport, workspaceId, viewId, isSelected = false, onHeightChange }) => {
+const NoteOverlay: React.FC<NoteOverlayProps> = ({ viewObjectId, name, position, width, viewport, isSelected = false, onHeightChange }) => {
     const contentRef = useRef<HTMLDivElement>(null);
     const lastReportedHeightRef = useRef<number>(0);
     const onHeightChangeRef = useRef(onHeightChange);
-    const [measuredHeight, setMeasuredHeight] = useState<number>(200);
+    const [measuredHeight, setMeasuredHeight] = useState<number>(80);
 
-    // Keep the callback ref updated to avoid stale closures
     useEffect(() => {
         onHeightChangeRef.current = onHeightChange;
     }, [onHeightChange]);
 
-    const { data: linkedNotes = [] } = useQuery({
-        queryKey: ['view-object-notes', workspaceId, viewId, viewObjectId],
-        queryFn: () => getNotesForViewObject(workspaceId!, viewId, viewObjectId),
-        enabled: !!viewId && !!viewObjectId && !!workspaceId,
-    });
-
-    // Get the first linked note (whiteboard_note should have exactly one linked note)
-    const note = linkedNotes[0];
-
-    const editor = useEditor({
-        extensions: [
-            StarterKit.configure({
-                blockquote: {
-                    HTMLAttributes: {
-                        class: "border-l-4 pl-4 italic text-gray-600"
-                    }
-                },
-                codeBlock: {
-                    HTMLAttributes: {
-                        class: "rounded bg-gray-800 text-gray-100 p-4 font-mono text-sm"
-                    }
-                }
-            }),
-            TaskList.configure({
-                HTMLAttributes: {
-                    class: 'list-none',
-                },
-            }),
-            TaskItem.configure({
-                HTMLAttributes: {
-                    class: 'pointer-events-none',
-                },
-            }),
-            Attachment.configure({
-                upload: undefined,
-                workspaceId: undefined,
-                listFiles: undefined
-            }),
-            ImageNode.configure({
-                upload: undefined,
-                workspaceId: undefined,
-                listFiles: undefined
-            }),
-            TableKit,
-        ],
-        editorProps: {
-            attributes: {
-                class: 'prose prose-sm focus:outline-none max-w-none',
-            },
-        },
-        content: note?.content ? JSON.parse(note.content) : null,
-        editable: false,
-    }, [note?.id]);
-
-    // Observe content size changes - depends on note.id so it runs after content loads
     useEffect(() => {
         const element = contentRef.current;
         if (!element) return;
 
         const reportHeight = (height: number) => {
-            // Only report if height changed significantly (more than 1px) to avoid excessive updates
             if (Math.abs(height - lastReportedHeightRef.current) > 1) {
                 lastReportedHeightRef.current = height;
                 setMeasuredHeight(height);
@@ -100,30 +36,22 @@ const NoteOverlay: React.FC<NoteOverlayProps> = ({ viewObjectId, position, width
         };
 
         const resizeObserver = new ResizeObserver(() => {
-            // Use offsetHeight to include padding and border
             const height = element.offsetHeight;
-            if (height > 0) {
-                reportHeight(height);
-            }
+            if (height > 0) reportHeight(height);
         });
 
         resizeObserver.observe(element);
 
-        // Delay initial height report to ensure content has rendered
         const rafId = requestAnimationFrame(() => {
             const initialHeight = element.offsetHeight;
-            if (initialHeight > 0) {
-                reportHeight(initialHeight);
-            }
+            if (initialHeight > 0) reportHeight(initialHeight);
         });
 
         return () => {
             resizeObserver.disconnect();
             cancelAnimationFrame(rafId);
         };
-    }, [viewObjectId, note?.id]);
-
-    if (!note || !note.content || !editor) return null;
+    }, [viewObjectId]);
 
     if (!position || typeof position.x !== 'number' || typeof position.y !== 'number') return null;
     if (!viewport || typeof viewport.x !== 'number' || typeof viewport.y !== 'number') return null;
@@ -132,7 +60,6 @@ const NoteOverlay: React.FC<NoteOverlayProps> = ({ viewObjectId, position, width
     const screenX = position.x * zoom + viewport.x;
     const screenY = position.y * zoom + viewport.y;
 
-    // Connection points positions (relative to the note, in world units before scale)
     const connectionPoints = isSelected ? [
         { x: width / 2, y: 0, label: 'top' },
         { x: width / 2, y: measuredHeight, label: 'bottom' },
@@ -156,13 +83,13 @@ const NoteOverlay: React.FC<NoteOverlayProps> = ({ viewObjectId, position, width
                         ? 'border-3 border-blue-500 border-dashed'
                         : 'border-2 border-yellow-400 dark:border-yellow-600'
                 }`}
-                style={{
-                    width: `${width}px`,
-                }}
+                style={{ width: `${width}px` }}
             >
-                <EditorContent editor={editor} />
+                <div className="flex items-center gap-2 text-yellow-700 dark:text-yellow-400">
+                    <FileText size={14} />
+                    <span className="text-sm font-medium truncate">{name || 'Note'}</span>
+                </div>
             </div>
-            {/* Connection points rendered as DOM elements so they appear above the note */}
             {connectionPoints.map((point) => (
                 <div
                     key={point.label}

@@ -764,15 +764,20 @@ export default {
     "TaskList":"체크리스트",
     "Attachment":"첨부",
     "Image":"이미지",
-    "YoutubeEmbed":"YouTube 삽입",
-    "ThreadsEmbed":"Threads 삽입",
-    "InstagramEmbed":"Instagram 삽입",
-    "TiktokEmbed":"TikTok 삽입",
+    "YoutubeEmbed":"YouTube",
+    "ThreadsEmbed":"Threads",
+    "InstagramEmbed":"Instagram",
+    "TiktokEmbed":"TikTok",
     "CalendarNode":"캘린더 이벤트",
     "LocationNode":"위치",
     "TagsNode":"태그",
     "RatingNode":"평점",
     "Video":"동영상",
+    "MapView":"지도",
+    "CalendarView":"캘린더",
+    "KanbanView":"칸반",
+    "WhiteboardView":"화이트보드",
+    "SpreadsheetView":"스프레드시트",
     "table":{
         "name": "표",
         "deleteColumn": "열 삭제",
@@ -791,7 +796,8 @@ export default {
         "block": "블록",
         "media": "미디어",
         "embed": "임베드",
-        "advanced": "고급"
+        "advanced": "고급",
+        "views": "뷰"
     }
   },
 } as const;

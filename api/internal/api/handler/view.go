@@ -12,6 +12,7 @@ import (
 )
 
 type CreateViewRequest struct {
+	NoteID     string `json:"note_id"`
 	Name       string `json:"name" validate:"required"`
 	Type       string `json:"type" validate:"required"`
 	Data       string `json:"data"`
@@ -28,6 +29,7 @@ type UpdateViewRequest struct {
 type GetViewResponse struct {
 	ID          string `json:"id"`
 	WorkspaceID string `json:"workspace_id"`
+	NoteID      string `json:"note_id"`
 	Name        string `json:"name"`
 	Type        string `json:"type"`
 	Data        string `json:"data"`
@@ -54,9 +56,11 @@ func (h Handler) GetViews(c echo.Context) error {
 	}
 
 	viewType := c.QueryParam("type")
+	noteId := c.QueryParam("noteId")
 
 	filter := model.ViewFilter{
 		WorkspaceID: workspaceId,
+		NoteID:      noteId,
 		ViewType:    viewType,
 		PageSize:    pageSize,
 		PageNumber:  pageNumber,
@@ -73,6 +77,51 @@ func (h Handler) GetViews(c echo.Context) error {
 		res = append(res, GetViewResponse{
 			ID:          v.ID,
 			WorkspaceID: v.WorkspaceID,
+			NoteID:      v.NoteID,
+			Name:        v.Name,
+			Type:        v.Type,
+			Data:        v.Data,
+			Visibility:  v.Visibility,
+			CreatedAt:   v.CreatedAt,
+			CreatedBy:   h.getUserNameByID(v.CreatedBy),
+			UpdatedAt:   v.UpdatedAt,
+			UpdatedBy:   h.getUserNameByID(v.UpdatedBy),
+		})
+	}
+
+	return c.JSON(http.StatusOK, res)
+}
+
+// GetNoteViews returns all views belonging to a specific note.
+func (h Handler) GetNoteViews(c echo.Context) error {
+	workspaceId := c.Param("workspaceId")
+	noteId := c.Param("noteId")
+
+	if workspaceId == "" {
+		return echo.NewHTTPError(http.StatusBadRequest, "workspace id is required")
+	}
+	if noteId == "" {
+		return echo.NewHTTPError(http.StatusBadRequest, "note id is required")
+	}
+
+	filter := model.ViewFilter{
+		WorkspaceID: workspaceId,
+		NoteID:      noteId,
+		PageSize:    1000,
+		PageNumber:  1,
+	}
+
+	views, err := h.db.FindViews(filter)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+	}
+
+	res := []GetViewResponse{}
+	for _, v := range views {
+		res = append(res, GetViewResponse{
+			ID:          v.ID,
+			WorkspaceID: v.WorkspaceID,
+			NoteID:      v.NoteID,
 			Name:        v.Name,
 			Type:        v.Type,
 			Data:        v.Data,
@@ -107,6 +156,7 @@ func (h Handler) GetView(c echo.Context) error {
 	res := GetViewResponse{
 		ID:          v.ID,
 		WorkspaceID: v.WorkspaceID,
+		NoteID:      v.NoteID,
 		Name:        v.Name,
 		Type:        v.Type,
 		Data:        v.Data,
@@ -161,6 +211,7 @@ func (h Handler) CreateView(c echo.Context) error {
 
 	v := model.View{
 		WorkspaceID: workspaceId,
+		NoteID:      req.NoteID,
 		ID:          util.NewId(),
 		Name:        req.Name,
 		Type:        req.Type,
@@ -231,6 +282,7 @@ func (h Handler) UpdateView(c echo.Context) error {
 
 	v := model.View{
 		WorkspaceID: workspaceId,
+		NoteID:      existingView.NoteID,
 		ID:          existingView.ID,
 		Name:        req.Name,
 		Type:        req.Type,
@@ -320,6 +372,7 @@ func (h Handler) UpdateViewVisibility(c echo.Context) error {
 
 	v := model.View{
 		WorkspaceID: workspaceId,
+		NoteID:      existingView.NoteID,
 		ID:          existingView.ID,
 		Name:        existingView.Name,
 		Type:        existingView.Type,

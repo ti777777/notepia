@@ -5,15 +5,12 @@ import { useMemo, useState } from "react"
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { createWorkspace } from "@/api/workspace"
-import { useSidebar } from "../sidebar/SidebarProvider"
-
 const WorkspaceMenu = () => {
     const { workspaces, fetchWorkspaces, getWorkspaceById } = useWorkspaceStore()
     const { workspaceId } = useParams()
     const [keyword, setKeyword] = useState("")
     const navigate = useNavigate()
     const { t } = useTranslation()
-    const { isCollapse } = useSidebar()
 
     const handleWorkspaceButtonClick = (id: string) => {
         if (id == workspaceId) return;
@@ -43,12 +40,9 @@ const WorkspaceMenu = () => {
         buttonClassName=" bg-white dark:bg-neutral-700 shadow border dark:border-none w-full px-3 py-1.5 rounded-md text-sm flex justify-center items-center truncate"
         buttonTooltip={getWorkspaceById(workspaceId!)?.name ?? ""}
         buttonContent={<>
-            {
-                !isCollapse &&
-                <span className="grow text-left truncate">
-                    {getWorkspaceById(workspaceId!)?.name ?? ""}
-                </span>
-            }
+            <span className="grow text-left truncate">
+                {getWorkspaceById(workspaceId!)?.name ?? ""}
+            </span>
             <span className="w-5">
                 <ChevronsUpDown className="" size={16} />
             </span>

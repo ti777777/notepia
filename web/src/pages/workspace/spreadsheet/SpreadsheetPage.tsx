@@ -5,7 +5,6 @@ import { getView } from "@/api/view"
 import useCurrentWorkspaceId from "@/hooks/use-currentworkspace-id"
 import SpreadsheetViewComponent from "@/components/views/spreadsheet/SpreadsheetViewComponent"
 import ViewHeader from "@/components/views/common/ViewHeader"
-import ViewMenu from "@/components/viewmenu/ViewMenu"
 import OneColumn from "@/components/onecolumn/OneColumn"
 
 const SpreadsheetPage = () => {
@@ -31,7 +30,10 @@ const SpreadsheetPage = () => {
         <OneColumn>
             <div className="flex flex-col h-svh">
                 <ViewHeader
-                    menu={<ViewMenu viewType="spreadsheet" currentViewId={view.id} />}
+                    viewId={view.id}
+                    workspaceId={currentWorkspaceId}
+                    viewName={view.name}
+                    viewType="spreadsheet"
                 />
                 <div className="flex-1 overflow-hidden">
                     <SpreadsheetViewComponent

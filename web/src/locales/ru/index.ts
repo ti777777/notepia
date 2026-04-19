@@ -764,15 +764,20 @@ export default {
     "TaskList":"Список задач",
     "Attachment":"Вложение",
     "Image":"Изображение",
-    "YoutubeEmbed":"YouTube видео",
-    "ThreadsEmbed":"Threads публикация",
-    "InstagramEmbed":"Instagram публикация",
-    "TiktokEmbed":"TikTok видео",
+    "YoutubeEmbed":"YouTube",
+    "ThreadsEmbed":"Threads",
+    "InstagramEmbed":"Instagram",
+    "TiktokEmbed":"TikTok",
     "CalendarNode":"Событие календаря",
     "LocationNode":"Местоположение",
     "TagsNode":"Теги",
     "RatingNode":"Рейтинг",
     "Video":"Видео",
+    "MapView":"Карта",
+    "CalendarView":"Календарь",
+    "KanbanView":"Канбан",
+    "WhiteboardView":"Белая доска",
+    "SpreadsheetView":"Таблица",
     "table":{
         "name": "Таблица",
         "deleteColumn": "удалить столбец",
@@ -791,7 +796,8 @@ export default {
         "block": "Блок",
         "media": "Медиа",
         "embed": "Вставка",
-        "advanced": "Расширенные"
+        "advanced": "Расширенные",
+        "views": "Представления"
     }
   },
 } as const;

@@ -862,16 +862,21 @@ export default {
     "TaskList":"核取清單項目",
     "Attachment":"檔案",
     "Image":"圖片",
-    "YoutubeEmbed":"YouTube 嵌入",
-    "ThreadsEmbed":"Threads 嵌入",
-    "InstagramEmbed":"Instagram 嵌入",
-    "TiktokEmbed":"TikTok 嵌入",
+    "YoutubeEmbed":"YouTube",
+    "ThreadsEmbed":"Threads",
+    "InstagramEmbed":"Instagram",
+    "TiktokEmbed":"TikTok",
     "CalendarNode":"行事曆事件",
     "LocationNode":"位置",
     "TagsNode":"標籤",
     "RatingNode":"評分",
     "Video":"影片",
     "SubPage":"頁面",
+    "MapView":"地圖",
+    "CalendarView":"行事曆",
+    "KanbanView":"看板",
+    "WhiteboardView":"白板",
+    "SpreadsheetView":"試算表",
     "subPage":{
         "newPage": "新頁面"
     },
@@ -893,7 +898,8 @@ export default {
         "block": "區塊",
         "media": "媒體",
         "embed": "嵌入",
-        "advanced": "進階"
+        "advanced": "進階",
+        "views": "視圖"
     }
   },
 } as const;

@@ -2,7 +2,6 @@ import { PlusCircle } from "lucide-react"
 import KanbanViewComponent from "./KanbanViewComponent"
 import CreateViewObjectModal from "../CreateViewObjectModal"
 import ViewHeader from "../common/ViewHeader"
-import ViewMenu from "@/components/viewmenu/ViewMenu"
 
 interface KanbanViewContentProps {
     view: any
@@ -38,7 +37,10 @@ const KanbanViewContent = ({
     return (
         <div className="flex flex-col h-screen">
             <ViewHeader
-                menu={<ViewMenu viewType="kanban" currentViewId={view.id} />}
+                viewId={view.id}
+                workspaceId={currentWorkspaceId}
+                viewName={view.name}
+                viewType="kanban"
                 rightActions={
                     <div className="flex gap-2 px-4">
                         <button

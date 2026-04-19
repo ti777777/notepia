@@ -5,7 +5,6 @@ import { getView } from "@/api/view"
 import useCurrentWorkspaceId from "@/hooks/use-currentworkspace-id"
 import WhiteboardViewComponent from "@/components/views/whiteboard/WhiteboardViewComponent"
 import ViewHeader from "@/components/views/common/ViewHeader"
-import ViewMenu from "@/components/viewmenu/ViewMenu"
 import OneColumn from "@/components/onecolumn/OneColumn"
 
 const WhiteboardPage = () => {
@@ -31,7 +30,10 @@ const WhiteboardPage = () => {
         <OneColumn>
             <div className="flex flex-col h-screen">
                 <ViewHeader
-                    menu={<ViewMenu viewType="whiteboard" currentViewId={view.id} />}
+                    viewId={view.id}
+                    workspaceId={currentWorkspaceId}
+                    viewName={view.name}
+                    viewType="whiteboard"
                 />
                 <div className="flex-1 overflow-hidden">
                     <WhiteboardViewComponent

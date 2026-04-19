@@ -7,7 +7,7 @@ import { BubbleMenu } from "@tiptap/react/menus"
 import { TableKit } from "@tiptap/extension-table"
 import { FC, useMemo, useRef, useEffect } from "react"
 import { useTranslation } from "react-i18next"
-import { GripVertical, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6, Image, List, ListTodo, FileText, Paperclip, Quote, Table, Type, Video, Youtube, CalendarDays, MapPin, Tag, Star } from 'lucide-react'
+import { GripVertical, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6, Image, List, ListTodo, FileText, Paperclip, Quote, Table, Type, Video, Youtube, CalendarDays, MapPin, Tag, Star, Map, Kanban, PenTool, Sheet } from 'lucide-react'
 import { CommandItem, SlashCommand } from './extensions/slashcommand/SlashCommand'
 import { Attachment } from './extensions/attachment/Attachment'
 import { ImageNode } from './extensions/imagenode/ImageNode'
@@ -18,6 +18,8 @@ import { InstagramEmbed } from './extensions/instagramembed/InstagramEmbed'
 import { TiktokEmbed } from './extensions/tiktokembed/TiktokEmbed'
 import { VideoNode } from './extensions/videonode/VideoNode'
 import { SubPageNode } from './extensions/subpagenode/SubPageNode'
+import { ViewNode } from './extensions/viewnode/ViewNode'
+import { createView, deleteView } from '@/api/view'
 import { CalendarNode } from './extensions/calendarnode/CalendarNode'
 import { LocationNode } from './extensions/locationnode/LocationNode'
 import { TagsNode } from './extensions/tagsnode/TagsNode'
@@ -157,6 +159,12 @@ const Editor: FC<Props> = ({
         workspaceId: currentWorkspaceId,
         parentNoteId: note.id,
         createNote,
+      }),
+      ViewNode.configure({
+        workspaceId: currentWorkspaceId,
+        noteId: note.id,
+        createView,
+        deleteView,
       }),
       PasteHandler.configure({
         upload: async (f: File, onProgress?: (percent: number) => void) => {
@@ -328,6 +336,47 @@ const Editor: FC<Props> = ({
                 keywords: ["page", "sub", "child", "nested", "note"],
                 command: ({ editor }: any) =>
                   editor?.chain().focus().setSubPage({ noteId: null, title: '' }).run(),
+              },
+              // Views
+              {
+                icon: <Map size={16} />,
+                label: t("editor.MapView", "Map"),
+                category: 'views',
+                keywords: ["map", "location", "geography", "view"],
+                command: ({ editor }: any) =>
+                  editor?.chain().focus().setViewNode({ viewId: null, viewType: 'map', name: '' }).run(),
+              },
+              {
+                icon: <CalendarDays size={16} />,
+                label: t("editor.CalendarView", "Calendar"),
+                category: 'views',
+                keywords: ["calendar", "schedule", "event", "view"],
+                command: ({ editor }: any) =>
+                  editor?.chain().focus().setViewNode({ viewId: null, viewType: 'calendar', name: '' }).run(),
+              },
+              {
+                icon: <Kanban size={16} />,
+                label: t("editor.KanbanView", "Kanban"),
+                category: 'views',
+                keywords: ["kanban", "board", "task", "view"],
+                command: ({ editor }: any) =>
+                  editor?.chain().focus().setViewNode({ viewId: null, viewType: 'kanban', name: '' }).run(),
+              },
+              {
+                icon: <PenTool size={16} />,
+                label: t("editor.WhiteboardView", "Whiteboard"),
+                category: 'views',
+                keywords: ["whiteboard", "draw", "canvas", "view"],
+                command: ({ editor }: any) =>
+                  editor?.chain().focus().setViewNode({ viewId: null, viewType: 'whiteboard', name: '' }).run(),
+              },
+              {
+                icon: <Sheet size={16} />,
+                label: t("editor.SpreadsheetView", "Spreadsheet"),
+                category: 'views',
+                keywords: ["spreadsheet", "table", "sheet", "excel", "view"],
+                command: ({ editor }: any) =>
+                  editor?.chain().focus().setViewNode({ viewId: null, viewType: 'spreadsheet', name: '' }).run(),
               },
               {
                 icon: <CalendarDays size={16} />,

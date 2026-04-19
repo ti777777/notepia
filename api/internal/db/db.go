@@ -15,7 +15,6 @@ type DB interface {
 	WorkspaceUserRepository
 	ViewRepository
 	ViewObjectRepository
-	ViewObjectNoteRepository
 	WidgetRepository
 	APIKeyRepository
 }
@@ -73,12 +72,6 @@ type ViewObjectRepository interface {
 	DeleteViewObject(v model.ViewObject) error
 	FindViewObject(v model.ViewObject) (model.ViewObject, error)
 	FindViewObjects(f model.ViewObjectFilter) ([]model.ViewObject, error)
-}
-type ViewObjectNoteRepository interface {
-	AddNoteToViewObject(v model.ViewObjectNote) error
-	RemoveNoteFromViewObject(v model.ViewObjectNote) error
-	FindNotesForViewObject(viewObjectID string) ([]model.Note, error)
-	FindViewObjectsForNote(noteID string) ([]model.ViewObject, error)
 }
 type WidgetRepository interface {
 	CreateWidget(w model.Widget) error

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { View, CreateViewRequest, UpdateViewRequest, ViewType, ViewObject, CreateViewObjectRequest, UpdateViewObjectRequest, ViewObjectType, ViewObjectWithView } from '@/types/view';
+import { View, CreateViewRequest, UpdateViewRequest, ViewType, ViewObject, CreateViewObjectRequest, UpdateViewObjectRequest, ViewObjectType } from '@/types/view';
 
 export const getViews = async (workspaceId: string, pageNum: number = 1, pageSize: number = 100, type?: ViewType) => {
   const params = new URLSearchParams({
@@ -12,6 +12,11 @@ export const getViews = async (workspaceId: string, pageNum: number = 1, pageSiz
   }
 
   const response = await axios.get(`/api/v1/workspaces/${workspaceId}/views?${params.toString()}`, { withCredentials: true });
+  return response.data as View[];
+};
+
+export const getNoteViews = async (workspaceId: string, noteId: string) => {
+  const response = await axios.get(`/api/v1/workspaces/${workspaceId}/notes/${noteId}/views`, { withCredentials: true });
   return response.data as View[];
 };
 
@@ -35,17 +40,15 @@ export const deleteView = async (workspaceId: string, viewId: string) => {
   return response.data;
 };
 
-// View Objects API
+export const updateViewVisibility = async (workspaceId: string, viewId: string, visibility: string) => {
+  const response = await axios.patch(`/api/v1/workspaces/${workspaceId}/views/${viewId}/visibility/${visibility}`);
+  return response.data as View;
+};
+
+// View Objects API (internal data storage for view types)
 export const getViewObjects = async (workspaceId: string, viewId: string, pageNum: number = 1, pageSize: number = 100, type?: ViewObjectType) => {
-  const params = new URLSearchParams({
-    pageSize: pageSize.toString(),
-    pageNumber: pageNum.toString(),
-  });
-
-  if (type) {
-    params.append('type', type);
-  }
-
+  const params = new URLSearchParams({ pageSize: pageSize.toString(), pageNumber: pageNum.toString() });
+  if (type) params.append('type', type);
   const response = await axios.get(`/api/v1/workspaces/${workspaceId}/views/${viewId}/objects?${params.toString()}`, { withCredentials: true });
   return response.data as ViewObject[];
 };
@@ -69,32 +72,3 @@ export const deleteViewObject = async (workspaceId: string, viewId: string, obje
   const response = await axios.delete(`/api/v1/workspaces/${workspaceId}/views/${viewId}/objects/${objectId}`);
   return response.data;
 };
-
-// View Object Notes API
-export const getNotesForViewObject = async (workspaceId: string, viewId: string, objectId: string) => {
-  const response = await axios.get(`/api/v1/workspaces/${workspaceId}/views/${viewId}/objects/${objectId}/notes`, { withCredentials: true });
-  return response.data;
-};
-
-export const addNoteToViewObject = async (workspaceId: string, viewId: string, objectId: string, noteId: string) => {
-  const response = await axios.post(`/api/v1/workspaces/${workspaceId}/views/${viewId}/objects/${objectId}/notes`, { note_id: noteId });
-  return response.data;
-};
-
-export const removeNoteFromViewObject = async (workspaceId: string, viewId: string, objectId: string, noteId: string) => {
-  const response = await axios.delete(`/api/v1/workspaces/${workspaceId}/views/${viewId}/objects/${objectId}/notes/${noteId}`);
-  return response.data;
-};
-
-// Get view objects for a note
-export const getViewObjectsForNote = async (workspaceId: string, noteId: string) => {
-  const response = await axios.get(`/api/v1/workspaces/${workspaceId}/notes/${noteId}/view-objects`, { withCredentials: true });
-  return response.data as ViewObjectWithView[];
-};
-
-
-export const updateViewVisibility = async (workspaceId: string, viewId: string, visibility: string) => {
-  const response = await axios.patch(`/api/v1/workspaces/${workspaceId}/views/${viewId}/visibility/${visibility}`);
-  return response.data as View;
-};
-
