@@ -1,10 +1,8 @@
-import { useState } from "react"
 import { useNavigate, useParams, useOutletContext } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
-import { CirclePlus, ArrowLeft } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import { getViewObject } from "@/api/view"
-import ViewObjectNotesManager from "../ViewObjectNotesManager"
 
 interface MapMarkerDetailContext {
     view: any
@@ -18,7 +16,6 @@ const MapMarkerDetail = () => {
     const navigate = useNavigate()
     const { markerId } = useParams<{ markerId: string }>()
     const { workspaceId, viewId, view } = useOutletContext<MapMarkerDetailContext>()
-    const [isAddingNote, setIsAddingNote] = useState(false)
 
     const { data: marker, isLoading } = useQuery({
         queryKey: ['view-object', workspaceId, viewId, markerId],
@@ -61,48 +58,30 @@ const MapMarkerDetail = () => {
 
     return (
         <div className="h-full overflow-y-auto bg-neutral-100 dark:bg-neutral-900">
-            {!isAddingNote && (
-                <div className="p-4 border-b dark:border-neutral-700">
-                    <button
-                        onClick={handleBack}
-                        className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 mb-3"
-                    >
-                        <ArrowLeft size={16} />
-                        {view.name}
-                    </button>
+            <div className="p-4 border-b dark:border-neutral-700">
+                <button
+                    onClick={handleBack}
+                    className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 mb-3"
+                >
+                    <ArrowLeft size={16} />
+                    {view.name}
+                </button>
 
-                    <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                            <div className="text-xl font-semibold">{marker.name}</div>
-                            <div className="text-sm text-gray-500 mt-1">
-                                {t('views.mapMarker')}
-                            </div>
-                            {markerData.lat && markerData.lng && (
-                                <div className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                                    <div>Lat: {markerData.lat.toFixed(4)}</div>
-                                    <div>Lng: {markerData.lng.toFixed(4)}</div>
-                                </div>
-                            )}
+                <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                        <div className="text-xl font-semibold">{marker.name}</div>
+                        <div className="text-sm text-gray-500 mt-1">
+                            {t('views.mapMarker')}
                         </div>
-                        <button
-                            onClick={() => setIsAddingNote(true)}
-                            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
-                            title={t('views.addNote')}
-                        >
-                            <CirclePlus size={20} />
-                        </button>
+                        {markerData.lat && markerData.lng && (
+                            <div className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                                <div>Lat: {markerData.lat.toFixed(4)}</div>
+                                <div>Lng: {markerData.lng.toFixed(4)}</div>
+                            </div>
+                        )}
                     </div>
                 </div>
-            )}
-
-            <ViewObjectNotesManager
-                workspaceId={workspaceId}
-                viewId={viewId!}
-                viewObjectId={markerId!}
-                viewObjectName={marker.name}
-                isAddingNote={isAddingNote}
-                setIsAddingNote={setIsAddingNote}
-            />
+            </div>
         </div>
     )
 }

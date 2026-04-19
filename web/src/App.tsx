@@ -8,26 +8,20 @@ import NotesLayout from './pages/workspace/notes/NotesLayout';
 import NotesPage from './pages/workspace/notes/NotesPage';
 import Setup from './pages/workspacesetup/WorkspaceSetupPage';
 import NoteDetailPage from './pages/workspace/notes/NoteDetailPage';
+import FilesPage from './pages/workspace/files/FilesPage';
 import Settings from './pages/workspace/settings/SettingsPage';
 import { Toast } from './components/toast/Toast'
 import { useToastStore } from './stores/toast';
 import WorkspaceLayout from './components/workspacelayout/WorkspaceLayout';
 import WorkspaceLoader from './components/workspaceloader/WorkspaceLoader';
-import FilesPage from './pages/workspace/files/FilesPage';
-import CalendarListPage from './pages/workspace/views/CalendarListPage';
-import MapListPage from './pages/workspace/views/MapListPage';
-import KanbanListPage from './pages/workspace/views/KanbanListPage';
-import WhiteboardListPage from './pages/workspace/views/WhiteboardListPage';
-import ViewSettingsPage from './pages/workspace/views/ViewSettingsPage';
+import ViewsLayout from './pages/workspace/views/ViewsLayout';
 import CalendarPage from './pages/workspace/calendar/CalendarPage';
 import CalendarSlotDetailPage from './pages/workspace/calendar/CalendarSlotDetailPage';
 import MapPage from './pages/workspace/map/MapPage';
 import MapMarkerDetailPage from './pages/workspace/map/MapMarkerDetailPage';
 import KanbanPage from './pages/workspace/kanban/KanbanPage';
 import WhiteboardPage from './pages/workspace/whiteboard/WhiteboardPage';
-import SpreadsheetListPage from './pages/workspace/views/SpreadsheetListPage';
 import SpreadsheetPage from './pages/workspace/spreadsheet/SpreadsheetPage';
-import WorkspaceHomePage from './pages/workspace/home/WorkspaceHomePage';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import useScrollToTop from '@/hooks/use-scrolltotop';
@@ -39,7 +33,6 @@ function App() {
   const toasts = useToastStore((s) => s.toasts);
   const { i18n } = useTranslation();
 
-  // Load user information and preferences globally
   const { isLoading } = useAuth();
 
   useScrollToTop();
@@ -53,7 +46,6 @@ function App() {
     document.documentElement.setAttribute('lang', currentLang);
   }, [i18n.language]);
 
-  // Show loading screen while user information is being loaded
   if (isLoading) {
     return (
       <div className='w-screen h-dvh flex justify-center items-center'>
@@ -73,33 +65,24 @@ function App() {
           <Route path='/workspace-setup' element={<Setup />} />
           <Route path='workspaces' element={<WorkspaceLoader />} />
           <Route path='workspaces/:workspaceId' element={<WorkspaceLayout />}>
+            <Route index element={<Navigate to="notes" replace />} />
             <Route path='notes' element={<NotesLayout />}>
               <Route index element={<NotesPage />} />
               <Route path=':noteId' element={<NoteDetailPage />} ></Route>
+              <Route path='files' element={<FilesPage />} />
             </Route>
-            <Route path='files' element={<FilesPage />}></Route>
-            <Route path='calendar' element={<CalendarListPage />}></Route>
-            <Route path='calendar/:calendarId' element={<CalendarPage />}>
-              <Route path='slot/:slotId' element={<CalendarSlotDetailPage />} />
+            <Route element={<ViewsLayout />}>
+              <Route path='calendar/:calendarId' element={<CalendarPage />}>
+                <Route path='slot/:slotId' element={<CalendarSlotDetailPage />} />
+              </Route>
+              <Route path='map/:mapId' element={<MapPage />}>
+                <Route path='marker/:markerId' element={<MapMarkerDetailPage />} />
+              </Route>
+              <Route path='kanban/:kanbanId' element={<KanbanPage />} />
+              <Route path='whiteboard/:whiteboardId' element={<WhiteboardPage />} />
+              <Route path='spreadsheet/:spreadsheetId' element={<SpreadsheetPage />} />
             </Route>
-            <Route path='calendar/:viewId/settings' element={<ViewSettingsPage />} />
-            <Route path='map' element={<MapListPage />}></Route>
-            <Route path='map/:mapId' element={<MapPage />}>
-              <Route path='marker/:markerId' element={<MapMarkerDetailPage />} />
-            </Route>
-            <Route path='map/:viewId/settings' element={<ViewSettingsPage />} />
-            <Route path='kanban' element={<KanbanListPage />}></Route>
-            <Route path='kanban/:kanbanId' element={<KanbanPage />} />
-            <Route path='kanban/:viewId/settings' element={<ViewSettingsPage />} />
-            <Route path='whiteboard' element={<WhiteboardListPage />}></Route>
-            <Route path='whiteboard/:whiteboardId' element={<WhiteboardPage />} />
-            <Route path='whiteboard/:viewId/settings' element={<ViewSettingsPage />} />
-            <Route path='spreadsheet' element={<SpreadsheetListPage />}></Route>
-            <Route path='spreadsheet/:spreadsheetId' element={<SpreadsheetPage />} />
-            <Route path='spreadsheet/:viewId/settings' element={<ViewSettingsPage />} />
             <Route path='settings' element={<Settings />}></Route>
-            <Route path='home' element={<WorkspaceHomePage />}></Route>
-            <Route path='' element={<WorkspaceHomePage />}></Route>
           </Route>
         </Route>
         <Route path="*" element={<NotFound />} />

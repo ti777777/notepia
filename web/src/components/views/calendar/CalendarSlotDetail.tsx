@@ -2,9 +2,8 @@ import { useState, useMemo, useEffect } from "react"
 import { useNavigate, useParams, useOutletContext } from "react-router-dom"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
-import { CirclePlus, ArrowLeft, Clock, Edit2, X, Check } from "lucide-react"
+import { ArrowLeft, Clock, Edit2, X, Check } from "lucide-react"
 import { getViewObject, updateViewObject } from "@/api/view"
-import ViewObjectNotesManager from "../ViewObjectNotesManager"
 import { CalendarSlotData } from "@/types/view"
 
 interface CalendarSlotDetailContext {
@@ -20,7 +19,6 @@ const CalendarSlotDetail = () => {
     const queryClient = useQueryClient()
     const { slotId } = useParams<{ slotId: string }>()
     const { workspaceId, viewId, view } = useOutletContext<CalendarSlotDetailContext>()
-    const [isAddingNote, setIsAddingNote] = useState(false)
     const [isEditing, setIsEditing] = useState(false)
 
     // Edit form state
@@ -142,7 +140,7 @@ const CalendarSlotDetail = () => {
 
     return (
         <div className="h-full overflow-y-auto bg-neutral-100 dark:bg-neutral-900">
-            {!isAddingNote && !isEditing && (
+            {!isEditing && (
                 <div className="p-4 border-b dark:border-neutral-700">
                     <button
                         onClick={handleBack}
@@ -210,19 +208,12 @@ const CalendarSlotDetail = () => {
                             >
                                 <Edit2 size={20} />
                             </button>
-                            <button
-                                onClick={() => setIsAddingNote(true)}
-                                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg"
-                                title={t('views.addNote')}
-                            >
-                                <CirclePlus size={20} />
-                            </button>
                         </div>
                     </div>
                 </div>
             )}
 
-            {!isAddingNote && isEditing && (
+            {isEditing && (
                 <div className="p-4 border-b dark:border-neutral-700">
                     <button
                         onClick={handleBack}
@@ -373,14 +364,6 @@ const CalendarSlotDetail = () => {
                 </div>
             )}
 
-            <ViewObjectNotesManager
-                workspaceId={workspaceId}
-                viewId={viewId!}
-                viewObjectId={slotId!}
-                viewObjectName={slot.name}
-                isAddingNote={isAddingNote}
-                setIsAddingNote={setIsAddingNote}
-            />
         </div>
     )
 }

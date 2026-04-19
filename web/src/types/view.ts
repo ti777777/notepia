@@ -1,51 +1,6 @@
 export type ViewType = 'map' | 'calendar' | 'kanban' | 'whiteboard' | 'spreadsheet';
 export type ViewObjectType = 'calendar_slot' | 'map_marker' | 'kanban_column' | 'whiteboard_stroke' | 'whiteboard_shape' | 'whiteboard_text' | 'whiteboard_note' | 'whiteboard_view' | 'whiteboard_edge';
 
-// View data structures
-export interface MapViewData {
-  center?: {
-    lat: number;
-    lng: number;
-  };
-  zoom?: number;
-}
-
-export interface CalendarViewData {
-  defaultYear?: number;
-  defaultMonth?: number;
-}
-
-export interface KanbanViewData {
-  // Array of column IDs in order
-  columns?: string[];
-}
-
-export interface View {
-  id: string;
-  workspace_id: string;
-  name: string;
-  type: ViewType;
-  data: string;
-  visibility?: string;
-  created_at: string;
-  created_by: string;
-  updated_at: string;
-  updated_by: string;
-}
-
-export interface CreateViewRequest {
-  name: string;
-  type: ViewType;
-  data?: string;
-  visibility?: string;
-}
-
-export interface UpdateViewRequest {
-  name?: string;
-  type?: ViewType;
-  data?: string;
-}
-
 export interface ViewObject {
   id: string;
   view_id: string;
@@ -70,9 +25,68 @@ export interface UpdateViewObjectRequest {
   data?: string;
 }
 
-export interface ViewObjectWithView {
-  view_object: ViewObject;
-  view: View;
+// View data structures
+export interface MapViewData {
+  center?: {
+    lat: number;
+    lng: number;
+  };
+  zoom?: number;
+}
+
+export interface CalendarViewData {
+  defaultYear?: number;
+  defaultMonth?: number;
+}
+
+export interface KanbanViewData {
+  // Array of column IDs in order
+  columns?: string[];
+}
+
+export interface WhiteboardViewData {
+  viewport?: {
+    x: number;
+    y: number;
+    zoom: number;
+  };
+}
+
+export interface SpreadsheetViewData {
+  defaultSheet?: string;
+  viewport?: {
+    scrollLeft: number;
+    scrollTop: number;
+    zoomRatio: number;
+  };
+}
+
+export interface View {
+  id: string;
+  workspace_id: string;
+  note_id?: string;
+  name: string;
+  type: ViewType;
+  data: string;
+  visibility?: string;
+  created_at: string;
+  created_by: string;
+  updated_at: string;
+  updated_by: string;
+}
+
+export interface CreateViewRequest {
+  note_id?: string;
+  name: string;
+  type: ViewType;
+  data?: string;
+  visibility?: string;
+}
+
+export interface UpdateViewRequest {
+  name?: string;
+  type?: ViewType;
+  data?: string;
 }
 
 // View object data structures
@@ -96,28 +110,19 @@ export interface KanbanColumnData {
 }
 
 // Whiteboard view data
-export interface WhiteboardViewData {
-  viewport?: {
-    x: number;
-    y: number;
-    zoom: number;
-  };
-}
-
-// Whiteboard object data structures
 export interface WhiteboardStrokeData {
-  points: { x: number; y: number }[];  // 路徑點
+  points: { x: number; y: number }[];
   color: string;
-  width: number;                        // 線條粗細
+  width: number;
 }
 
 export interface WhiteboardShapeData {
   type: 'rectangle' | 'circle' | 'line';
   position: { x: number; y: number };
-  dimensions: { width: number; height: number };  // 對於 line，表示終點
+  dimensions: { width: number; height: number };
   color: string;
   strokeWidth: number;
-  filled?: boolean;  // 是否填充
+  filled?: boolean;
 }
 
 export interface WhiteboardTextData {
@@ -139,7 +144,7 @@ export interface WhiteboardNoteData {
 
 export interface WhiteboardViewRefData {
   position: { x: number; y: number };
-  viewId: string;                       // 連結的 view ID
+  viewId: string;
   width?: number;
   height?: number;
 }
@@ -147,27 +152,17 @@ export interface WhiteboardViewRefData {
 export type ConnectionPointType = 'top' | 'bottom' | 'left' | 'right';
 
 export interface WhiteboardEdgeData {
-  startObjectId: string | null;  // 連接的起始物件 ID (null 表示自由端點)
-  endObjectId: string | null;    // 連接的結束物件 ID (null 表示自由端點)
-  startConnectionPoint: ConnectionPointType | null;  // 起始物件的連接點 (top/bottom/left/right)
-  endConnectionPoint: ConnectionPointType | null;    // 結束物件的連接點 (top/bottom/left/right)
-  startPoint: { x: number; y: number };  // 起始點座標
-  endPoint: { x: number; y: number };    // 結束點座標
-  curveType: 'straight' | 'bezier' | 'elbow';  // 曲線類型
-  arrowType: 'none' | 'end' | 'start' | 'both';  // 箭頭類型
-  lineStyle: 'solid' | 'dashed' | 'dotted';  // 線條樣式
+  startObjectId: string | null;
+  endObjectId: string | null;
+  startConnectionPoint: ConnectionPointType | null;
+  endConnectionPoint: ConnectionPointType | null;
+  startPoint: { x: number; y: number };
+  endPoint: { x: number; y: number };
+  curveType: 'straight' | 'bezier' | 'elbow';
+  arrowType: 'none' | 'end' | 'start' | 'both';
+  lineStyle: 'solid' | 'dashed' | 'dotted';
   color: string;
   strokeWidth: number;
-}
-
-// Spreadsheet view data
-export interface SpreadsheetViewData {
-  defaultSheet?: string;  // 默認顯示的工作表 ID
-  viewport?: {
-    scrollLeft: number;
-    scrollTop: number;
-    zoomRatio: number;
-  };
 }
 
 // FortuneSheet 單元格數據結構

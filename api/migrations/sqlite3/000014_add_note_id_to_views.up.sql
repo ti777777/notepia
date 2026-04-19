@@ -1,0 +1,1 @@
+ALTER TABLE views ADD COLUMN note_id VARCHAR(255);

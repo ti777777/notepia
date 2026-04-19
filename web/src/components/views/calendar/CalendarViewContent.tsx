@@ -6,7 +6,6 @@ import CalendarViewComponent from "./CalendarViewComponent"
 import CalendarWeekView from "./CalendarWeekView"
 import CalendarDayView from "./CalendarDayView"
 import ViewHeader from "../common/ViewHeader"
-import ViewMenu from "@/components/viewmenu/ViewMenu"
 
 type CalendarViewMode = 'month' | 'week' | 'day'
 
@@ -29,6 +28,7 @@ interface CalendarViewContentProps {
 const CalendarViewContent = ({
     view,
     viewObjects,
+    currentWorkspaceId,
     focusedObjectId
 }: CalendarViewContentProps) => {
     const { t } = useTranslation()
@@ -38,7 +38,10 @@ const CalendarViewContent = ({
     return (
         <div className="w-full">
             <ViewHeader
-                menu={<ViewMenu viewType="calendar" currentViewId={view.id} />}
+                viewId={view.id}
+                workspaceId={currentWorkspaceId}
+                viewName={view.name}
+                viewType="calendar"
                 rightActions={
                     <>
                         <div className="pr-4 flex gap-2 items-center">

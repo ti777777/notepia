@@ -2,7 +2,6 @@ import { MapPin } from "lucide-react"
 import { useTwoColumn } from "@/components/twocolumn"
 import MapViewComponent from "./MapViewComponent"
 import ViewHeader from "../common/ViewHeader"
-import ViewMenu from "@/components/viewmenu/ViewMenu"
 
 interface MapViewContentProps {
     view: any
@@ -23,6 +22,7 @@ interface MapViewContentProps {
 const MapViewContent = ({
     view,
     viewObjects,
+    currentWorkspaceId,
     focusedObjectId
 }: MapViewContentProps) => {
     const { isSidebarCollapsed, toggleSidebar } = useTwoColumn()
@@ -31,7 +31,10 @@ const MapViewContent = ({
         <div className="w-full h-full flex flex-col">
             <div className="flex-shrink-0">
                 <ViewHeader
-                    menu={<ViewMenu viewType="map" currentViewId={view.id} />}
+                    viewId={view.id}
+                    workspaceId={currentWorkspaceId}
+                    viewName={view.name}
+                    viewType="map"
                     rightActions={
                         <>
                             <div className="px-4 flex gap-2">

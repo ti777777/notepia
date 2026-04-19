@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Search } from 'lucide-react';
-import { createViewObject, addNoteToViewObject } from '@/api/view';
+import { createViewObject } from '@/api/view';
 import { getNotes } from '@/api/note';
 import { useToastStore } from '@/stores/toast';
 import * as Dialog from '@radix-ui/react-dialog';
@@ -44,7 +44,6 @@ const AddElementDialog = ({
             const selectedNote = notes.find((n: any) => n.id === noteId);
             const noteTitle = selectedNote?.title || extractTextFromTipTapJSON(selectedNote?.content || '').substring(0, 50) || t('notes.untitled') || 'Untitled';
 
-            // Create view object without noteId in data
             const noteData: WhiteboardNoteData = {
                 position,
                 width: 768
@@ -54,9 +53,6 @@ const AddElementDialog = ({
                 type: 'whiteboard_note',
                 data: JSON.stringify(noteData)
             });
-
-            // Link note to view object via view_object_notes
-            await addNoteToViewObject(workspaceId, viewId, viewObject.id, noteId);
 
             return viewObject;
         },

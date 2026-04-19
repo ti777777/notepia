@@ -78,7 +78,7 @@ const NoteDetailView: FC<NoteDetailViewProps> = ({
                                     <>
                                         <button
                                             onClick={() => navigate(`../${parentNote.id}`)}
-                                            className="text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors shrink-0 max-w-[160px] truncate text-left"
+                                            className="text-base text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors shrink-0 max-w-[160px] truncate text-left"
                                         >
                                             {parentNote.title || t("notes.untitled")}
                                         </button>
@@ -90,7 +90,7 @@ const NoteDetailView: FC<NoteDetailViewProps> = ({
                                     value={displayTitle}
                                     editable={true}
                                     placeholder={t("notes.untitled")}
-                                    className="flex-1 text-sm font-medium text-gray-700 dark:text-gray-200 border-none outline-none bg-transparent placeholder:text-gray-300 dark:placeholder:text-gray-600 min-w-0 truncate"
+                                    className="flex-1 text-base font-medium text-gray-700 dark:text-gray-200 border-none outline-none bg-transparent placeholder:text-gray-300 dark:placeholder:text-gray-600 min-w-0 truncate"
                                     onChange={onTitleChange}
                                 />
                             </div>

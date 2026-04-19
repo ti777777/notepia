@@ -30,7 +30,8 @@ func RegisterWorkspace(api *echo.Group, h handler.Handler, authMiddleware middle
 	g.PUT("/:workspaceId/notes/:id", h.UpdateNote)
 	g.DELETE("/:workspaceId/notes/:id", h.DeleteNote)
 	g.PATCH("/:workspaceId/notes/:id/visibility/:visibility", h.UpdateNoteVisibility)
-	g.GET("/:workspaceId/notes/:noteId/view-objects", h.GetViewObjectsForNote)
+	// Note-scoped views: returns all views belonging to a specific note
+	g.GET("/:workspaceId/notes/:noteId/views", h.GetNoteViews)
 
 	g.GET("/:workspaceId/files/:id", h.Download)
 	g.GET("/:workspaceId/files", h.List)
@@ -45,16 +46,12 @@ func RegisterWorkspace(api *echo.Group, h handler.Handler, authMiddleware middle
 	g.DELETE("/:workspaceId/views/:id", h.DeleteView)
 	g.PATCH("/:workspaceId/views/:id/visibility/:visibility", h.UpdateViewVisibility)
 
+	// View objects (internal data storage for view types: calendar slots, map markers, kanban columns, whiteboard objects)
 	g.GET("/:workspaceId/views/:viewId/objects", h.GetViewObjects)
 	g.POST("/:workspaceId/views/:viewId/objects", h.CreateViewObject)
 	g.GET("/:workspaceId/views/:viewId/objects/:id", h.GetViewObject)
 	g.PUT("/:workspaceId/views/:viewId/objects/:id", h.UpdateViewObject)
 	g.DELETE("/:workspaceId/views/:viewId/objects/:id", h.DeleteViewObject)
-
-	// View object notes
-	g.GET("/:workspaceId/views/:viewId/objects/:id/notes", h.GetNotesForViewObject)
-	g.POST("/:workspaceId/views/:viewId/objects/:id/notes", h.AddNoteToViewObject)
-	g.DELETE("/:workspaceId/views/:viewId/objects/:id/notes/:noteId", h.RemoveNoteFromViewObject)
 
 	// Widgets
 	g.GET("/:workspaceId/widgets", h.GetWidgets)

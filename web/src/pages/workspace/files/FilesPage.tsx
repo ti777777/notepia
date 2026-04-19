@@ -6,8 +6,6 @@ import { Download, FileIcon, Trash2, Edit2, X, Check, Search, Filter, Eye, FileT
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
 import useCurrentWorkspaceId from '@/hooks/use-currentworkspace-id';
-import SidebarButton from '@/components/sidebar/SidebarButton';
-import OneColumn from '@/components/onecolumn/OneColumn';
 import { Tooltip } from 'radix-ui';
 import FilesGridSkeleton from '@/components/skeletons/FilesGridSkeleton';
 
@@ -182,8 +180,8 @@ const FilesPage = () => {
     const files = data?.pages.flat().filter(f => f !== null) || [];
 
     return (
-        <OneColumn>
-            <div className="w-full px-4 xl:pl-0">
+        <div className="h-full overflow-auto bg-neutral-50 dark:bg-neutral-950">
+            <div className="w-full px-4">
                 <input
                     ref={fileInputRef}
                     type="file"
@@ -211,7 +209,6 @@ const FilesPage = () => {
                             :
                             <div className="flex justify-between items-center">
                                 <div className="flex items-center gap-3 h-10">
-                                    <SidebarButton />
                                     <div className="flex gap-2 items-center max-w-[calc(100vw-165px)] overflow-x-auto whitespace-nowrap sm:text-xl font-semibold hide-scrollbar">
                                         {t("menu.files")}
                                     </div>
@@ -494,7 +491,7 @@ const FilesPage = () => {
                     </motion.div>
                 )}
             </AnimatePresence>
-        </OneColumn>
+        </div>
     );
 };
 

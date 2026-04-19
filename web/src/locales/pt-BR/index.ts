@@ -764,15 +764,20 @@ export default {
     "TaskList":"Lista de Tarefas",
     "Attachment":"Anexo",
     "Image":"Imagem",
-    "YoutubeEmbed":"Incorporar YouTube",
-    "ThreadsEmbed":"Incorporar Threads",
-    "InstagramEmbed":"Incorporar Instagram",
-    "TiktokEmbed":"Incorporar TikTok",
+    "YoutubeEmbed":"YouTube",
+    "ThreadsEmbed":"Threads",
+    "InstagramEmbed":"Instagram",
+    "TiktokEmbed":"TikTok",
     "CalendarNode":"Evento de Calendário",
     "LocationNode":"Localização",
     "TagsNode":"Etiquetas",
     "RatingNode":"Avaliação",
     "Video":"Vídeo",
+    "MapView":"Mapa",
+    "CalendarView":"Calendário",
+    "KanbanView":"Kanban",
+    "WhiteboardView":"Quadro Branco",
+    "SpreadsheetView":"Planilha",
     "table":{
         "name": "Tabela",
         "deleteColumn": "excluir coluna",
@@ -791,7 +796,8 @@ export default {
         "block": "Bloco",
         "media": "Mídia",
         "embed": "Incorporar",
-        "advanced": "Avançado"
+        "advanced": "Avançado",
+        "views": "Visualizações"
     }
   },
 } as const;

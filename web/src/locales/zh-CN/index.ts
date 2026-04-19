@@ -847,16 +847,21 @@ export default {
     "TaskList":"任务列表",
     "Attachment":"附件",
     "Image":"图片",
-    "YoutubeEmbed":"YouTube 嵌入",
-    "ThreadsEmbed":"Threads 嵌入",
-    "InstagramEmbed":"Instagram 嵌入",
-    "TiktokEmbed":"TikTok 嵌入",
+    "YoutubeEmbed":"YouTube",
+    "ThreadsEmbed":"Threads",
+    "InstagramEmbed":"Instagram",
+    "TiktokEmbed":"TikTok",
     "CalendarNode":"日历事件",
     "LocationNode":"位置",
     "TagsNode":"标签",
     "RatingNode":"评分",
     "Video":"视频",
     "SubPage":"页面",
+    "MapView":"地图",
+    "CalendarView":"日历",
+    "KanbanView":"看板",
+    "WhiteboardView":"白板",
+    "SpreadsheetView":"电子表格",
     "subPage":{
         "newPage": "新页面"
     },
@@ -878,7 +883,8 @@ export default {
         "block": "块",
         "media": "媒体",
         "embed": "嵌入",
-        "advanced": "高级"
+        "advanced": "高级",
+        "views": "视图"
     }
   },
 } as const;

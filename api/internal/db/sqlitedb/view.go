@@ -47,6 +47,11 @@ func (s SqliteDB) FindViews(f model.ViewFilter) ([]model.View, error) {
 		args = append(args, f.ViewIDs)
 	}
 
+	if f.NoteID != "" {
+		conds = append(conds, "note_id = ?")
+		args = append(args, f.NoteID)
+	}
+
 	if f.ViewType != "" {
 		conds = append(conds, "type = ?")
 		args = append(args, f.ViewType)

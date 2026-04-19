@@ -23,16 +23,16 @@ func (s SqliteDB) DeleteViewObject(v model.ViewObject) error {
 }
 
 func (s SqliteDB) FindViewObject(v model.ViewObject) (model.ViewObject, error) {
-	viewObject, err := gorm.
+	obj, err := gorm.
 		G[model.ViewObject](s.getDB()).
 		Where("id = ?", v.ID).
 		Take(context.Background())
 
-	return viewObject, err
+	return obj, err
 }
 
 func (s SqliteDB) FindViewObjects(f model.ViewObjectFilter) ([]model.ViewObject, error) {
-	var viewObjects []model.ViewObject
+	var objects []model.ViewObject
 
 	var conds []string
 	var args []interface{}
@@ -59,10 +59,10 @@ func (s SqliteDB) FindViewObjects(f model.ViewObjectFilter) ([]model.ViewObject,
 	}
 
 	err := query.
-		Order("created_at DESC").
+		Order("created_at ASC").
 		Offset((f.PageNumber - 1) * f.PageSize).
 		Limit(f.PageSize).
-		Find(&viewObjects).Error
+		Find(&objects).Error
 
-	return viewObjects, err
+	return objects, err
 }

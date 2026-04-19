@@ -1,4 +1,4 @@
-import { ChevronsUpDown, Plus, Trash2, Settings } from "lucide-react"
+import { ChevronsUpDown, Plus, Trash2 } from "lucide-react"
 import { Dropdown } from "../dropdown/Dropdown"
 import { useMemo, useState } from "react"
 import { useNavigate } from 'react-router-dom'
@@ -85,14 +85,6 @@ const ViewMenu = ({ viewType, currentViewId }: ViewMenuProps) => {
         e.stopPropagation()
         if (window.confirm(t('views.deleteConfirm'))) {
             deleteMutation.mutate(viewId)
-        }
-    }
-
-    const handleOpenSettings = (e?: React.MouseEvent, viewId?: string) => {
-        e?.stopPropagation()
-        const targetViewId = viewId || currentViewId
-        if (targetViewId) {
-            navigate(`/workspaces/${currentWorkspaceId}/${viewType}/${targetViewId}/settings`)
         }
     }
 
@@ -197,18 +189,6 @@ const ViewMenu = ({ viewType, currentViewId }: ViewMenuProps) => {
                 )}
             </div>
 
-            {currentViewId && (
-                <div className="px-2 pt-2 border-t dark:border-neutral-700">
-                    <button
-                        onClick={() => handleOpenSettings()}
-                        className="w-full px-3 py-2 rounded hover:bg-neutral-200 dark:hover:bg-neutral-700 flex items-center gap-2 text-sm"
-                        title={t('views.settings') || 'Settings'}
-                    >
-                        <Settings size={16} />
-                        <span>{t('views.settings') || 'Settings'}</span>
-                    </button>
-                </div>
-            )}
             </Dropdown>
         </>
     )
