@@ -9,6 +9,16 @@ import { ViewType } from '@/types/view'
 import { MapContainer, TileLayer, Marker } from 'react-leaflet'
 import { Icon } from 'leaflet'
 import SpreadsheetViewComponent from '@/components/views/spreadsheet/SpreadsheetViewComponent'
+
+const rendererMarkerIcon = new Icon({
+    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+    iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
+})
 import WhiteboardViewComponent from '@/components/views/whiteboard/WhiteboardViewComponent'
 import { MapInlinePreview, CalendarInlinePreview, KanbanInlinePreview } from '@/components/editor/extensions/viewnode/ViewNodeInlinePreview'
 
@@ -97,17 +107,6 @@ const ThreadsRendererEmbed: React.FC<{ url: string }> = ({ url }) => {
     return <div ref={containerRef} />
 }
 
-// ── Leaflet marker icon (same as editor) ─────────────────────────────────────
-const rendererMarkerIcon = new Icon({
-    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-    iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41],
-})
-
 const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 const WEEKDAYS   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
 
@@ -127,72 +126,69 @@ const CalendarEventRenderer: React.FC<{ date?: string; title?: string; descripti
     })()
 
     return (
-        <div className="my-1 flex items-stretch rounded-lg border dark:border-neutral-700 overflow-hidden bg-white dark:bg-neutral-900 shadow-sm">
-            <div className="flex flex-col items-center justify-center bg-blue-600 dark:bg-blue-700 text-white px-4 py-3 min-w-[72px] select-none">
-                {formatted ? (
-                    <>
-                        <span className="text-xs font-medium uppercase tracking-wide opacity-80">{formatted.month}</span>
-                        <span className="text-3xl font-bold leading-none">{formatted.day}</span>
-                        <span className="text-xs opacity-80 mt-0.5">{formatted.weekday}</span>
-                    </>
-                ) : (
-                    <CalendarDays size={28} className="opacity-70" />
-                )}
-            </div>
-            <div className="flex flex-col justify-center px-4 py-3 flex-1 min-w-0">
-                {title && <p className="text-sm font-semibold text-gray-800 dark:text-gray-100 truncate">{title}</p>}
-                {formatted && (
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                        {formatted.weekday}, {formatted.month} {formatted.day}, {formatted.year}
-                    </p>
-                )}
-                {description && <p className="text-xs text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">{description}</p>}
-            </div>
+        <div className="flex flex-wrap items-center gap-1.5 my-1 px-1 py-1">
+            <CalendarDays size={14} className="text-gray-400 dark:text-gray-500 shrink-0" />
+            {formatted && (
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-neutral-700 text-gray-600 dark:text-gray-300 select-none">
+                    {formatted.month} {formatted.day}, {formatted.year}
+                </span>
+            )}
+            {title && <span className="text-sm text-gray-800 dark:text-gray-200 truncate">{title}</span>}
+            {description && <span className="text-xs text-gray-500 dark:text-gray-400 truncate">{description}</span>}
         </div>
     )
 }
 
 const LocationRenderer: React.FC<{ lat: number; lng: number; name?: string; address?: string; zoom?: number }> = ({
     lat, lng, name, address, zoom = 15,
-}) => (
-    <div className="my-1 rounded-lg border dark:border-neutral-700 overflow-hidden bg-white dark:bg-neutral-900 shadow-sm">
-        <div style={{ height: 220 }} className="w-full">
-            <MapContainer
-                center={[lat, lng]}
-                zoom={zoom}
-                className="h-full w-full"
-                zoomControl={false}
-                scrollWheelZoom={false}
-                dragging={false}
-                doubleClickZoom={false}
-                attributionControl={false}
+}) => {
+    const [showMap, setShowMap] = useState(false)
+    return (
+        <div className="my-1">
+            <div
+                className="flex flex-wrap items-center gap-1.5 px-1 py-1 cursor-pointer"
+                onClick={() => setShowMap(s => !s)}
             >
-                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                <Marker position={[lat, lng]} icon={rendererMarkerIcon} />
-            </MapContainer>
-        </div>
-        <div className="flex items-center justify-between gap-2 px-3 py-2 border-t dark:border-neutral-700">
-            <div className="flex items-center gap-1.5 min-w-0">
-                <MapPin size={14} className="text-red-500 shrink-0" />
-                <div className="min-w-0">
-                    {name && <p className="text-sm font-medium text-gray-800 dark:text-gray-100 truncate">{name}</p>}
-                    {address && address !== name && (
-                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{address}</p>
-                    )}
-                </div>
+                <MapPin size={14} className="text-gray-400 dark:text-gray-500 shrink-0" />
+                {name && (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-neutral-700 text-gray-600 dark:text-gray-300 select-none">
+                        {name}
+                    </span>
+                )}
+                {address && address !== name && (
+                    <span className="text-xs text-gray-500 dark:text-gray-400 truncate">{address}</span>
+                )}
+                <a
+                    href={`https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=15/${lat}/${lng}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-0.5 rounded text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                    title="Open in OpenStreetMap"
+                    onClick={e => e.stopPropagation()}
+                >
+                    <ExternalLink size={12} />
+                </a>
             </div>
-            <a
-                href={`https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=15/${lat}/${lng}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="shrink-0 p-1 rounded hover:bg-gray-100 dark:hover:bg-neutral-700 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                title="Open in OpenStreetMap"
-            >
-                <ExternalLink size={14} />
-            </a>
+            {showMap && (
+                <div style={{ height: 200 }} className="w-full rounded-md overflow-hidden border dark:border-neutral-700">
+                    <MapContainer
+                        center={[lat, lng]}
+                        zoom={zoom}
+                        className="h-full w-full"
+                        zoomControl={false}
+                        scrollWheelZoom={false}
+                        dragging={false}
+                        doubleClickZoom={false}
+                        attributionControl={false}
+                    >
+                        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                        <Marker position={[lat, lng]} icon={rendererMarkerIcon} />
+                    </MapContainer>
+                </div>
+            )}
         </div>
-    </div>
-)
+    )
+}
 
 // ── Rating renderer ───────────────────────────────────────────────────────────
 const RatingRenderer: React.FC<{ rating: number; maxRating: number; label?: string }> = ({ rating, maxRating, label }) => (
