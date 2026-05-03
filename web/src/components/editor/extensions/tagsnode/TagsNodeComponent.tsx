@@ -1,5 +1,5 @@
 import { NodeViewProps, NodeViewWrapper } from '@tiptap/react'
-import { ChevronUp, ChevronDown, Trash2, Tag, X, Plus } from 'lucide-react'
+import { ChevronUp, ChevronDown, Trash2, X, Plus } from 'lucide-react'
 import { useState, useRef, useEffect, KeyboardEvent, useCallback } from 'react'
 import { useDragMenu, NodeTouchMenu } from '@/components/editor/DragMenuContext'
 
@@ -9,7 +9,7 @@ function TagChip({ label, onRemove }: { label: string; onRemove?: () => void }) 
   const { bg, text } = TAG_STYLE
   return (
     <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${bg} ${text} select-none`}>
-      {label}
+      <span className="opacity-50">#</span>{label}
       {onRemove && (
         <button onClick={onRemove} className="ml-0.5 rounded-full hover:bg-black/10 dark:hover:bg-white/10 p-0.5 transition-colors" tabIndex={-1}>
           <X size={10} strokeWidth={2.5} />
@@ -96,7 +96,6 @@ const TagsNodeComponent: React.FC<NodeViewProps> = ({ node, updateAttributes, se
     <NodeViewWrapper>
       <div className="relative group my-1">
         <div className="flex flex-wrap items-center gap-1.5 px-1 py-1 cursor-text" onClick={() => inputRef.current?.focus()}>
-          <Tag size={14} className="text-gray-400 dark:text-gray-500 shrink-0" />
           {tags.map((t, i) => <TagChip key={t} label={t} onRemove={() => removeTag(i)} />)}
           <input
             ref={inputRef}
